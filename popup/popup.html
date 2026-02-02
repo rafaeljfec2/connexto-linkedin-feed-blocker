@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LinkedIn Feed Blocker</title>
+    <style>
+      body {
+        width: 320px;
+        min-height: 200px;
+        margin: 0;
+        padding: 12px;
+        font-family: system-ui, sans-serif;
+        font-size: 14px;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+      textarea {
+        width: 100%;
+        min-height: 120px;
+        box-sizing: border-box;
+        padding: 8px;
+        resize: vertical;
+        font-family: inherit;
+        font-size: 13px;
+      }
+      button {
+        margin-top: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <label for="keywords">Keywords (one per line)</label>
+    <textarea
+      id="keywords"
+      placeholder="One word or phrase per line"
+    ></textarea>
+    <button id="save">Save</button>
+    <script src="popup.js"></script>
+  </body>
+</html>

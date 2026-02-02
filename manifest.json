@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn Feed Blocker",
+  "version": "1.0.0",
+  "description": "Blocks feed posts containing user-defined keywords.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.linkedin.com/feed/*"],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "LinkedIn Feed Blocker"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/feed/*"],
+      "js": ["content/content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
