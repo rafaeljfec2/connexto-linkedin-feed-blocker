@@ -2,53 +2,157 @@ const BLOCKED_ATTR = "data-linkedin-feed-blocker";
 const POST_SELECTOR = 'main div[data-urn^="urn:li:activity"]';
 
 let keywords = [];
+let blockedAuthors = [];
+let settings = {
+  paused: false,
+  whitelistMode: false,
+  useRegex: false,
+  collapseInsteadOfHide: false,
+  notificationOnly: false,
+};
 let processDebounceTimer = null;
 const DEBOUNCE_MS = 100;
+const BLOCKED_LIST_MAX = 50;
 
-function normalizeKeywords(raw) {
+function normalizeList(raw) {
   if (Array.isArray(raw)) {
-    return raw.map((s) => String(s).trim().toLowerCase()).filter(Boolean);
+    return raw.map((s) => String(s).trim()).filter(Boolean);
   }
   if (typeof raw === "string") {
     return raw
       .split("\n")
-      .map((s) => s.trim().toLowerCase())
+      .map((s) => s.trim())
       .filter(Boolean);
   }
   return [];
 }
 
-const BLOCKED_LIST_MAX = 50;
+function normalizeKeywords(raw) {
+  const list = normalizeList(raw);
+  return settings.useRegex ? list : list.map((s) => s.toLowerCase());
+}
+
+function matchKeyword(text, kw) {
+  if (settings.useRegex) {
+    try {
+      return new RegExp(kw, "i").test(text);
+    } catch {
+      return text.toLowerCase().includes(kw.toLowerCase());
+    }
+  }
+  return text.toLowerCase().includes(kw);
+}
 
 function getMatchingKeyword(text) {
   if (!keywords.length) return null;
+  const found = keywords.find((kw) => matchKeyword(text, kw));
+  return found ?? null;
+}
+
+function getMatchingAuthor(text) {
+  if (!blockedAuthors.length) return null;
   const lower = text.toLowerCase();
-  return keywords.find((kw) => lower.includes(kw)) ?? null;
+  return blockedAuthors.find((a) => lower.includes(a.toLowerCase())) ?? null;
+}
+
+function shouldBlockByKeyword(text) {
+  const match = getMatchingKeyword(text);
+  return settings.whitelistMode ? match === null : match !== null;
+}
+
+function shouldBlockByAuthor(text) {
+  return getMatchingAuthor(text) !== null;
 }
 
 function shouldBlock(text) {
-  return getMatchingKeyword(text) !== null;
+  if (settings.whitelistMode) {
+    const keywordMatch = getMatchingKeyword(text) !== null;
+    const authorMatch = shouldBlockByAuthor(text);
+    return !keywordMatch || authorMatch;
+  }
+  return shouldBlockByKeyword(text) || shouldBlockByAuthor(text);
+}
+
+function getBlockReason(text) {
+  const kw = getMatchingKeyword(text);
+  if (kw !== null && !settings.whitelistMode) {
+    return { type: "keyword", value: kw };
+  }
+  const author = getMatchingAuthor(text);
+  if (author !== null) {
+    return { type: "author", value: author };
+  }
+  if (settings.whitelistMode && getMatchingKeyword(text) === null) {
+    return { type: "whitelist", value: "" };
+  }
+  return null;
 }
 
 function appendBlockedPost(snippet, keyword) {
-  chrome.storage.local.get(["blockedPosts"], (result) => {
+  chrome.storage.local.get(["blockedPosts", "statsByKeyword"], (result) => {
     const list = Array.isArray(result.blockedPosts) ? result.blockedPosts : [];
     list.unshift({ snippet, keyword, at: Date.now() });
+    const prev = result.statsByKeyword ?? null;
+    const stats =
+      prev && typeof prev === "object" && !Array.isArray(prev)
+        ? { ...prev }
+        : {};
+    stats[keyword] = (stats[keyword] ?? 0) + 1;
     chrome.storage.local.set({
       blockedPosts: list.slice(0, BLOCKED_LIST_MAX),
+      statsByKeyword: stats,
     });
   });
 }
 
+function collapsePost(element, reason) {
+  if (element.querySelector(".linkedin-feed-blocker-bar")) return;
+  const bar = document.createElement("div");
+  bar.className = "linkedin-feed-blocker-bar";
+  bar.style.cssText =
+    "padding:12px;background:#24282e;color:#9aa0a6;font-size:13px;border-radius:8px;margin-bottom:8px;";
+  const label = reason ? `Post ocultado por: ${reason}` : "Post ocultado";
+  bar.textContent = label;
+  const btn = document.createElement("button");
+  btn.textContent = "Expandir";
+  btn.style.cssText =
+    "margin-left:12px;padding:4px 10px;cursor:pointer;background:#0a66c2;color:#fff;border:none;border-radius:6px;font-size:12px;";
+  btn.addEventListener("click", () => {
+    bar.remove();
+    wrapper.style.display = "";
+  });
+  bar.appendChild(btn);
+  const wrapper = document.createElement("div");
+  wrapper.style.display = "none";
+  while (element.firstChild) {
+    wrapper.appendChild(element.firstChild);
+  }
+  element.appendChild(bar);
+  element.appendChild(wrapper);
+}
+
 function processPost(element) {
   if (element.getAttribute(BLOCKED_ATTR) !== null) return;
-  element.setAttribute(BLOCKED_ATTR, "1");
   const text = element.textContent ?? "";
-  const keyword = getMatchingKeyword(text);
-  if (keyword === null) return;
-  element.style.display = "none";
+  const reason = getBlockReason(text);
+  if (reason === null) return;
+  element.setAttribute(BLOCKED_ATTR, "1");
+  let keywordLabel = "lista branca";
+  if (reason.type === "keyword") keywordLabel = reason.value;
+  else if (reason.type === "author") keywordLabel = `autor: ${reason.value}`;
   const snippet = text.trim().slice(0, 80).replaceAll(/\s+/g, " ");
-  appendBlockedPost(snippet, keyword);
+  appendBlockedPost(snippet, keywordLabel);
+
+  if (settings.notificationOnly) {
+    element.style.borderLeft = "4px solid #f59e0b";
+    element.style.opacity = "0.85";
+    return;
+  }
+  if (settings.collapseInsteadOfHide) {
+    collapsePost(element, keywordLabel);
+    return;
+  }
+  element.style.display = "none";
 }
 
 function collectPosts(root) {
@@ -67,6 +171,7 @@ function processNodes(nodes) {
 
 function runProcess() {
   processDebounceTimer = null;
+  if (settings.paused) return;
   const feed = document.querySelector("main");
   if (!feed) return;
   const posts = feed.querySelectorAll(POST_SELECTOR);
@@ -74,6 +179,7 @@ function runProcess() {
 }
 
 function scheduleProcess(mutations) {
+  if (settings.paused) return;
   const added = [];
   for (const m of mutations) {
     if (m.addedNodes) {
@@ -99,17 +205,34 @@ function startObserver() {
   observer.observe(feed, { childList: true, subtree: true });
 }
 
-function loadKeywords() {
-  chrome.storage.sync.get(["keywords"], (result) => {
-    keywords = normalizeKeywords(result.keywords ?? []);
-    startObserver();
-  });
+function loadConfig() {
+  chrome.storage.sync.get(
+    ["keywords", "settings", "blockedAuthors"],
+    (result) => {
+      const nextSettings = result.settings ?? null;
+      settings =
+        nextSettings && typeof nextSettings === "object"
+          ? { ...settings, ...nextSettings }
+          : settings;
+      keywords = normalizeKeywords(result.keywords ?? []);
+      blockedAuthors = normalizeList(result.blockedAuthors ?? []);
+      startObserver();
+    }
+  );
 }
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName !== "sync" || !changes.keywords) return;
-  const newValue = changes.keywords.newValue;
-  keywords = normalizeKeywords(newValue ?? []);
+  if (areaName !== "sync") return;
+  const newSettings = changes.settings?.newValue ?? null;
+  if (newSettings && typeof newSettings === "object") {
+    settings = { ...settings, ...newSettings };
+  }
+  if (changes.keywords) {
+    keywords = normalizeKeywords(changes.keywords.newValue ?? []);
+  }
+  if (changes.blockedAuthors) {
+    blockedAuthors = normalizeList(changes.blockedAuthors.newValue ?? []);
+  }
 });
 
-loadKeywords();
+loadConfig();

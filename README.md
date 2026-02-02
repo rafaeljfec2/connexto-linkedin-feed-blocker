@@ -7,11 +7,12 @@ Extensão para Chrome (Manifest V3) que oculta posts do feed do LinkedIn quando 
 ```
 connexto-linkedin-feed-blocker/
 ├── manifest.json       # Manifest da extensão (MV3)
+├── background.js       # Service worker: badge com contagem de bloqueados
 ├── popup/
-│   ├── popup.html      # Interface do popup
-│   └── popup.js        # Carrega/salva palavras (chrome.storage.sync)
+│   ├── popup.html      # Interface do popup (Palavras-chave, Bloqueados, Parâmetros)
+│   └── popup.js        # Carrega/salva palavras, parâmetros e lista bloqueada
 ├── content/
-│   └── content.js      # Observador do feed e lógica de bloqueio
+│   └── content.js      # Observador do feed e lógica de bloqueio (regex, lista branca, autor, colapsar, etc.)
 ├── scripts/
 │   ├── load-in-chrome.sh   # Abre a página de extensões do Chrome e exibe o caminho da pasta (Linux/macOS)
 │   └── load-in-chrome.bat  # O mesmo para Windows
@@ -84,11 +85,20 @@ Depois dos passos do seu sistema, faça no Chrome:
 ## Como utilizar
 
 1. Acesse o [Feed do LinkedIn](https://www.linkedin.com/feed/).
-2. Clique no ícone da extensão na barra de ferramentas do Chrome para abrir o popup.
-3. No campo de texto, digite uma palavra ou frase por linha (não diferencia maiúsculas de minúsculas).
-4. Clique em **Salvar** para gravar as palavras.
-5. Recarregue a página do feed (F5 ou atualizar) para as novas palavras entrarem em vigor.
-6. Posts que contiverem qualquer uma das palavras ou frases salvas serão ocultados. Novos posts carregados ao rolar a página são processados automaticamente.
+2. Clique no ícone da extensão na barra de ferramentas do Chrome para abrir o popup (ou use o atalho **Ctrl+Shift+B** / **Cmd+Shift+B** no Mac).
+3. **Palavras-chave:** digite uma palavra ou frase por linha e clique em **Salvar**. O feed recarrega e os posts que contêm alguma palavra são ocultados.
+4. **Posts bloqueados:** aba que lista os últimos posts ocultados e a palavra que casou; botão para exportar (JSON) e limpar a lista.
+5. **Parâmetros:** aba de configurações:
+   - **Pausar bloqueio:** desativa o bloqueio sem apagar as palavras.
+   - **Modo lista branca:** só mostra posts que contêm alguma palavra-chave (oculta o resto).
+   - **Usar regex:** trata as palavras como expressões regulares.
+   - **Colapsar em vez de esconder:** mostra uma barra “Post ocultado por X” com botão **Expandir**.
+   - **Só notificação:** marca o post com borda laranja sem esconder.
+   - **Bloquear por autor:** lista de nomes/textos (um por linha); posts que contêm algum são ocultados.
+   - **Importar/exportar palavras:** exportar em .txt ou colar texto e clicar em **Adicionar às palavras**.
+   - **Sugestões:** palavras pré-definidas; clique para adicionar à lista.
+   - **Estatísticas:** contagem de bloqueios por palavra.
+6. O ícone da extensão exibe um badge com a quantidade de posts bloqueados na lista atual.
 
 ## Como atualizar a extensão
 

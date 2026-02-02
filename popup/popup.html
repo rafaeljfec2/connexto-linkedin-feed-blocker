@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -21,7 +21,8 @@
       }
 
       body {
-        width: 360px;
+        width: 380px;
+        max-height: 560px;
         min-height: 320px;
         margin: 0;
         padding: 0;
@@ -29,6 +30,7 @@
         font-size: 14px;
         color: var(--text);
         background: var(--bg);
+        overflow-y: auto;
       }
 
       .header {
@@ -52,15 +54,16 @@
 
       .tabs {
         display: flex;
-        padding: 0 20px;
+        padding: 0 12px;
         gap: 0;
         background: var(--surface);
         border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
       }
 
       .tab {
-        padding: 12px 16px;
-        font-size: 13px;
+        padding: 10px 12px;
+        font-size: 12px;
         font-weight: 500;
         color: var(--text-muted);
         background: none;
@@ -98,7 +101,7 @@
 
       textarea {
         width: 100%;
-        min-height: 140px;
+        min-height: 100px;
         padding: 12px;
         font-family: "SF Mono", "Consolas", "Monaco", monospace;
         font-size: 13px;
@@ -110,6 +113,10 @@
         resize: vertical;
         outline: none;
         transition: border-color 0.15s ease;
+      }
+
+      textarea#keywords {
+        min-height: 120px;
       }
 
       textarea::placeholder {
@@ -164,14 +171,15 @@
         opacity: 1;
       }
 
-      .blocked-panel h2 {
+      .blocked-panel h2,
+      .params-section h2 {
         margin: 0 0 12px;
         font-size: 13px;
         font-weight: 600;
       }
 
       .blocked-list {
-        max-height: 220px;
+        max-height: 200px;
         overflow-y: auto;
         margin: 0;
         padding: 0;
@@ -211,7 +219,8 @@
         margin-top: 12px;
       }
 
-      .blocked-actions button {
+      .blocked-actions button,
+      .params-section button:not(.primary) {
         padding: 6px 12px;
         font-size: 12px;
         background: var(--surface);
@@ -221,9 +230,131 @@
         cursor: pointer;
       }
 
-      .blocked-actions button:hover {
+      .blocked-actions button:hover,
+      .params-section button:not(.primary):hover {
         background: var(--border);
         color: var(--text);
+      }
+
+      .params-section {
+        margin-bottom: 20px;
+      }
+
+      .params-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .param-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+
+      .param-row label {
+        margin: 0;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      .toggle {
+        width: 40px;
+        height: 22px;
+        border-radius: 11px;
+        background: var(--border);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.2s ease;
+      }
+
+      .toggle.on {
+        background: var(--accent);
+      }
+
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        top: 2px;
+        left: 2px;
+        transition: left 0.2s ease;
+      }
+
+      .toggle.on::after {
+        left: 20px;
+      }
+
+      .params-section textarea {
+        min-height: 60px;
+        font-size: 12px;
+      }
+
+      .suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .suggestions button {
+        padding: 4px 10px;
+        font-size: 11px;
+        background: var(--surface);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .suggestions button:hover {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .stats-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .stats-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .stats-empty {
+        font-size: 12px;
+        color: var(--text-muted);
+        padding: 12px 0;
+      }
+
+      .footer {
+        padding: 12px 20px;
+        margin-top: 8px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+        font-size: 11px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
@@ -251,7 +382,17 @@
         aria-selected="false"
         aria-controls="panel-blocked"
       >
-        Posts bloqueados (<span id="blocked-count">0</span>)
+        Bloqueados (<span id="blocked-count">0</span>)
+      </button>
+      <button
+        type="button"
+        class="tab"
+        role="tab"
+        id="tab-params"
+        aria-selected="false"
+        aria-controls="panel-params"
+      >
+        Parâmetros
       </button>
     </nav>
     <main id="panel-keywords" class="panel active" role="tabpanel">
@@ -276,8 +417,114 @@
       </p>
       <div class="blocked-actions">
         <button type="button" id="clear-blocked">Limpar lista</button>
+        <button type="button" id="export-blocked">Exportar (JSON)</button>
       </div>
     </section>
+    <section id="panel-params" class="panel params-panel" role="tabpanel">
+      <div class="params-section">
+        <h2>Comportamento</h2>
+        <div class="param-row">
+          <label for="toggle-paused">Pausar bloqueio</label>
+          <button
+            type="button"
+            class="toggle"
+            id="toggle-paused"
+            aria-pressed="false"
+          ></button>
+        </div>
+        <div class="param-row">
+          <label for="toggle-whitelist"
+            >Modo lista branca (só mostrar posts com palavra-chave)</label
+          >
+          <button
+            type="button"
+            class="toggle"
+            id="toggle-whitelist"
+            aria-pressed="false"
+          ></button>
+        </div>
+        <div class="param-row">
+          <label for="toggle-regex">Usar regex nas palavras</label>
+          <button
+            type="button"
+            class="toggle"
+            id="toggle-regex"
+            aria-pressed="false"
+          ></button>
+        </div>
+        <div class="param-row">
+          <label for="toggle-collapse">Colapsar em vez de esconder</label>
+          <button
+            type="button"
+            class="toggle"
+            id="toggle-collapse"
+            aria-pressed="false"
+          ></button>
+        </div>
+        <div class="param-row">
+          <label for="toggle-notification"
+            >Só notificação (marcar sem esconder)</label
+          >
+          <button
+            type="button"
+            class="toggle"
+            id="toggle-notification"
+            aria-pressed="false"
+          ></button>
+        </div>
+      </div>
+      <div class="params-section">
+        <h2>Bloquear por autor</h2>
+        <label for="blocked-authors">Nomes ou textos (um por linha)</label>
+        <textarea
+          id="blocked-authors"
+          placeholder="Nome do perfil&#10;empresa X"
+        ></textarea>
+      </div>
+      <div class="params-section">
+        <h2>Importar / exportar palavras</h2>
+        <button type="button" id="export-keywords">
+          Exportar palavras (.txt)
+        </button>
+        <label for="import-keywords"
+          >Colar texto para importar (uma por linha)</label
+        >
+        <textarea
+          id="import-keywords"
+          placeholder="Cole aqui e clique em Adicionar"
+        ></textarea>
+        <div class="actions">
+          <button type="button" id="import-add" class="primary">
+            Adicionar às palavras
+          </button>
+        </div>
+      </div>
+      <div class="params-section">
+        <h2>Sugestões</h2>
+        <p class="hint">Clique para adicionar à lista de palavras-chave.</p>
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+      <div class="params-section">
+        <h2>Estatísticas</h2>
+        <ul class="stats-list" id="stats-list"></ul>
+        <p class="stats-empty" id="stats-empty">Nenhum bloqueio registrado.</p>
+      </div>
+      <div class="actions">
+        <button type="button" id="save-params" class="primary">
+          Salvar parâmetros
+        </button>
+        <span class="feedback" id="feedback-params"></span>
+      </div>
+    </section>
+    <footer class="footer">
+      Desenvolvido por
+      <a
+        href="https://github.com/rafaeljfec2"
+        target="_blank"
+        rel="noopener noreferrer"
+        >rafaeljfec2</a
+      >
+    </footer>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -9,11 +9,23 @@
     "default_popup": "popup/popup.html",
     "default_title": "LinkedIn Feed Blocker"
   },
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://www.linkedin.com/feed/*"],
       "js": ["content/content.js"],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+B",
+        "mac": "Command+Shift+B"
+      },
+      "description": "Abrir popup da extensão"
+    }
+  }
 }
