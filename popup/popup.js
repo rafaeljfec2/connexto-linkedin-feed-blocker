@@ -1,5 +1,6 @@
 const keywordsEl = document.getElementById("keywords");
 const saveBtn = document.getElementById("save");
+const feedbackEl = document.getElementById("feedback");
 
 chrome.storage.sync.get(["keywords"], (result) => {
   const raw = result.keywords ?? [];
@@ -13,6 +14,8 @@ function save() {
     .map((s) => s.trim())
     .filter(Boolean);
   chrome.storage.sync.set({ keywords: lines });
+  feedbackEl.classList.add("visible");
+  setTimeout(() => feedbackEl.classList.remove("visible"), 2000);
 }
 
 saveBtn.addEventListener("click", save);
