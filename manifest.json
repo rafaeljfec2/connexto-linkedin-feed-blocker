@@ -3,6 +3,11 @@
   "name": "LinkedIn Feed Blocker",
   "version": "1.0.0",
   "description": "Blocks feed posts containing user-defined keywords.",
+  "icons": {
+    "16": "assets/Gemini_Generated_Image_q6f89lq6f89lq6f8.png",
+    "48": "assets/Gemini_Generated_Image_q6f89lq6f89lq6f8.png",
+    "128": "assets/Gemini_Generated_Image_q6f89lq6f89lq6f8.png"
+  },
   "permissions": ["storage", "tabs", "notifications"],
   "host_permissions": ["https://www.linkedin.com/feed/*"],
   "action": {
