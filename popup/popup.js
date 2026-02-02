@@ -1,8 +1,14 @@
 const keywordsEl = document.getElementById("keywords");
 const saveBtn = document.getElementById("save");
 const feedbackEl = document.getElementById("feedback");
+const tabKeywords = document.getElementById("tab-keywords");
+const tabBlocked = document.getElementById("tab-blocked");
+const panelKeywords = document.getElementById("panel-keywords");
+const panelBlocked = document.getElementById("panel-blocked");
 const blockedCountEl = document.getElementById("blocked-count");
+const blockedCountPanelEl = document.getElementById("blocked-count-panel");
 const blockedListEl = document.getElementById("blocked-list");
+const blockedEmptyEl = document.getElementById("blocked-empty");
 const clearBlockedBtn = document.getElementById("clear-blocked");
 
 chrome.storage.sync.get(["keywords"], (result) => {
@@ -11,9 +17,25 @@ chrome.storage.sync.get(["keywords"], (result) => {
   keywordsEl.value = value;
 });
 
+function showTab(panel) {
+  const isBlocked = panel === panelBlocked;
+  tabKeywords.classList.toggle("active", !isBlocked);
+  tabKeywords.setAttribute("aria-selected", String(!isBlocked));
+  tabBlocked.classList.toggle("active", isBlocked);
+  tabBlocked.setAttribute("aria-selected", String(isBlocked));
+  panelKeywords.classList.toggle("active", !isBlocked);
+  panelBlocked.classList.toggle("active", isBlocked);
+}
+
+tabKeywords.addEventListener("click", () => showTab(panelKeywords));
+tabBlocked.addEventListener("click", () => showTab(panelBlocked));
+
 function renderBlockedList(list) {
   const items = Array.isArray(list) ? list : [];
   blockedCountEl.textContent = String(items.length);
+  blockedCountPanelEl.textContent = String(items.length);
+  blockedEmptyEl.style.display = items.length === 0 ? "block" : "none";
+  blockedListEl.style.display = items.length === 0 ? "none" : "block";
   blockedListEl.innerHTML = items
     .map((item) => {
       const snip = item.snippet ?? "";
