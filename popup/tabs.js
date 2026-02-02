@@ -1,10 +1,12 @@
 const panels = (el) => [
+  el.panelDashboard,
   el.panelKeywords,
   el.panelBlocked,
   el.panelParams,
   el.panelInsights,
 ];
 const tabButtons = (el) => [
+  el.tabDashboard,
   el.tabKeywords,
   el.tabBlocked,
   el.tabParams,
@@ -26,15 +28,20 @@ export function showTab(elements, panel) {
 
 export function initTabs(elements) {
   const {
+    tabDashboard,
     tabKeywords,
     tabBlocked,
     tabParams,
     tabInsights,
+    panelDashboard,
     panelKeywords,
     panelBlocked,
     panelParams,
     panelInsights,
   } = elements;
+  tabDashboard?.addEventListener("click", () =>
+    showTab(elements, panelDashboard)
+  );
   tabKeywords?.addEventListener("click", () =>
     showTab(elements, panelKeywords)
   );

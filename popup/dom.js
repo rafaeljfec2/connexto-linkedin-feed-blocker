@@ -4,10 +4,12 @@ export const elements = {
   keywordsEl: null,
   saveBtn: null,
   feedbackEl: null,
+  tabDashboard: null,
   tabKeywords: null,
   tabBlocked: null,
   tabParams: null,
   tabInsights: null,
+  panelDashboard: null,
   panelKeywords: null,
   panelBlocked: null,
   panelParams: null,
@@ -57,16 +59,23 @@ export const elements = {
   insightsBlockingEl: null,
   insightsCategoryEl: null,
   insightsAuthorsEl: null,
+  dashboardSessionEl: null,
+  dashboardBlockingChartEl: null,
+  dashboardKeywordsChartEl: null,
+  dashboardCategoryChartEl: null,
+  dashboardAuthorsChartEl: null,
 };
 
 export function initElements() {
   elements.keywordsEl = $("keywords");
   elements.saveBtn = $("save");
   elements.feedbackEl = $("feedback");
+  elements.tabDashboard = $("tab-dashboard");
   elements.tabKeywords = $("tab-keywords");
   elements.tabBlocked = $("tab-blocked");
   elements.tabParams = $("tab-params");
   elements.tabInsights = $("tab-insights");
+  elements.panelDashboard = $("panel-dashboard");
   elements.panelKeywords = $("panel-keywords");
   elements.panelBlocked = $("panel-blocked");
   elements.panelParams = $("panel-params");
@@ -116,4 +125,9 @@ export function initElements() {
   elements.insightsBlockingEl = $("insights-blocking");
   elements.insightsCategoryEl = $("insights-category");
   elements.insightsAuthorsEl = $("insights-authors");
+  elements.dashboardSessionEl = $("dashboard-session");
+  elements.dashboardBlockingChartEl = $("dashboard-blocking-chart");
+  elements.dashboardKeywordsChartEl = $("dashboard-keywords-chart");
+  elements.dashboardCategoryChartEl = $("dashboard-category-chart");
+  elements.dashboardAuthorsChartEl = $("dashboard-authors-chart");
 }

@@ -14,8 +14,8 @@
 }
 
 body {
-  width: 440px;
-  max-height: 560px;
+  width: 520px;
+  max-height: 600px;
   min-height: 320px;
   margin: 0;
   padding: 0;
@@ -518,4 +518,120 @@ button:active {
   padding-left: 18px;
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.dashboard-panel h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dashboard-block {
+  margin-bottom: 14px;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.dashboard-block:last-child {
+  margin-bottom: 0;
+}
+
+.dashboard-chart-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.dashboard-legend {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.dashboard-empty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.dashboard-bar-wrap {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.dashboard-bar {
+  height: 100%;
+  min-width: 2px;
+  transition: width 0.2s ease;
+}
+
+.dashboard-bar-seen {
+  background: var(--success);
+}
+
+.dashboard-bar-blocked {
+  background: #f59e0b;
+}
+
+.dashboard-bar-block {
+  background: var(--accent);
+}
+
+.dashboard-bar-keyword {
+  background: #8b5cf6;
+}
+
+.dashboard-bar-category {
+  background: #06b6d4;
+}
+
+.dashboard-bar-author {
+  background: #ec4899;
+}
+
+.dashboard-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dashboard-bar-row {
+  display: grid;
+  grid-template-columns: 52px 1fr 28px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.dashboard-bar-label {
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-bar-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dashboard-bar-track .dashboard-bar {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.dashboard-bar-value {
+  text-align: right;
+  color: var(--text);
+  font-weight: 500;
 }

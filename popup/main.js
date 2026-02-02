@@ -26,6 +26,7 @@ import {
   bindToggles,
 } from "./params.js";
 import { renderInsights } from "./insights.js";
+import { renderDashboard } from "./dashboard.js";
 
 initElements();
 
@@ -36,12 +37,16 @@ loadStats(elements);
 renderSuggestions(elements, escapeHtml);
 bindToggles(elements);
 renderInsights(elements);
+renderDashboard(elements);
 
 elements.blockedListFilterEl?.addEventListener("input", () =>
   loadBlockedList(elements)
 );
 elements.blockedGroupByEl?.addEventListener("change", () =>
   loadBlockedList(elements)
+);
+elements.tabDashboard?.addEventListener("click", () =>
+  renderDashboard(elements)
 );
 elements.tabInsights?.addEventListener("click", () => renderInsights(elements));
 
@@ -75,6 +80,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
     (changes.sessionStats ?? changes.feedInsights ?? changes.countByKeywordDay)
   ) {
     renderInsights(elements);
+    renderDashboard(elements);
   }
 });
 

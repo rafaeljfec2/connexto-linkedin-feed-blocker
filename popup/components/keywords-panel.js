@@ -4,7 +4,7 @@ customElements.define(
     connectedCallback() {
       if (this.hasChildNodes()) return;
       this.innerHTML = `
-    <main id="panel-keywords" class="panel active" role="tabpanel">
+    <main id="panel-keywords" class="panel" role="tabpanel">
       <label for="keywords">Palavras-chave (uma por linha)</label>
       <textarea
         id="keywords"

@@ -9,8 +9,18 @@ customElements.define(
         type="button"
         class="tab active"
         role="tab"
-        id="tab-keywords"
+        id="tab-dashboard"
         aria-selected="true"
+        aria-controls="panel-dashboard"
+      >
+        Dashboard
+      </button>
+      <button
+        type="button"
+        class="tab"
+        role="tab"
+        id="tab-keywords"
+        aria-selected="false"
         aria-controls="panel-keywords"
       >
         Palavras-chave
