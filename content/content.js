@@ -18,18 +18,37 @@ function normalizeKeywords(raw) {
   return [];
 }
 
-function shouldBlock(text) {
-  if (!keywords.length) return false;
+const BLOCKED_LIST_MAX = 50;
+
+function getMatchingKeyword(text) {
+  if (!keywords.length) return null;
   const lower = text.toLowerCase();
-  return keywords.some((kw) => lower.includes(kw));
+  return keywords.find((kw) => lower.includes(kw)) ?? null;
+}
+
+function shouldBlock(text) {
+  return getMatchingKeyword(text) !== null;
+}
+
+function appendBlockedPost(snippet, keyword) {
+  chrome.storage.local.get(["blockedPosts"], (result) => {
+    const list = Array.isArray(result.blockedPosts) ? result.blockedPosts : [];
+    list.unshift({ snippet, keyword, at: Date.now() });
+    chrome.storage.local.set({
+      blockedPosts: list.slice(0, BLOCKED_LIST_MAX),
+    });
+  });
 }
 
 function processPost(element) {
   if (element.getAttribute(BLOCKED_ATTR) !== null) return;
   element.setAttribute(BLOCKED_ATTR, "1");
   const text = element.textContent ?? "";
-  if (!shouldBlock(text)) return;
+  const keyword = getMatchingKeyword(text);
+  if (keyword === null) return;
   element.style.display = "none";
+  const snippet = text.trim().slice(0, 80).replaceAll(/\s+/g, " ");
+  appendBlockedPost(snippet, keyword);
 }
 
 function collectPosts(root) {
