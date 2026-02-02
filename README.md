@@ -15,6 +15,10 @@ connexto-linkedin-feed-blocker/
 ├── scripts/
 │   ├── load-in-chrome.sh   # Abre a página de extensões do Chrome e exibe o caminho da pasta (Linux/macOS)
 │   └── load-in-chrome.bat  # O mesmo para Windows
+├── docs/
+│   ├── extensoes-modo-desenvolvedor.png       # Passo 1: Modo do desenvolvedor
+│   ├── extensoes-carregar-sem-compactacao.png # Passo 2: Botão Carregar sem compactação
+│   └── extensao-instalada.png                 # Passo 4: Extensão instalada na lista
 └── README.md
 ```
 
@@ -33,9 +37,17 @@ O Chrome não oferece instalador tradicional (ex.: .exe/.msi) para extensões. V
 Depois dos passos do seu sistema, faça no Chrome:
 
 1. Ative o **Modo do desenvolvedor** (alternador no canto superior direito da página de extensões).
-2. Clique em **Carregar sem compactação**.
+
+   ![Página Extensões do Chrome com o alternador Modo do desenvolvedor](docs/extensoes-modo-desenvolvedor.png)
+
+2. Clique em **Carregar sem compactação** (o botão aparece com o Modo do desenvolvedor ativado).
+
+   ![Botões Carregar sem compactação, Compactar extensão e Atualizar na página de extensões](docs/extensoes-carregar-sem-compactacao.png)
+
 3. Selecione a pasta da extensão (a que contém o `manifest.json`).
-4. A extensão aparecerá na barra de ferramentas.
+4. A extensão aparecerá na barra de ferramentas e na lista de extensões (ícone de quebra-cabeça).
+
+   ![LinkedIn Feed Blocker instalado na lista de extensões do Chrome](docs/extensao-instalada.png)
 
 #### Linux
 
