@@ -182,7 +182,13 @@ export function exportConfig(elements) {
     new Promise((resolve) => chrome.storage.sync.get(null, resolve)),
     new Promise((resolve) =>
       chrome.storage.local.get(
-        ["blockedPosts", "statsByKeyword", "countByKeywordDay"],
+        [
+          "blockedPosts",
+          "statsByKeyword",
+          "countByKeywordDay",
+          "sessionStats",
+          "feedInsights",
+        ],
         resolve
       )
     ),
@@ -223,6 +229,8 @@ export function importConfig(elements, onSuccess) {
           blockedPosts: local.blockedPosts ?? [],
           statsByKeyword: local.statsByKeyword ?? {},
           countByKeywordDay: local.countByKeywordDay ?? {},
+          sessionStats: local.sessionStats ?? {},
+          feedInsights: local.feedInsights ?? { authors: {}, categories: {} },
         });
         onSuccess?.();
         if (elements.keywordsEl) {
@@ -280,6 +288,8 @@ export function clearAllData(elements) {
     blockedPosts: [],
     statsByKeyword: {},
     countByKeywordDay: {},
+    sessionStats: {},
+    feedInsights: { authors: {}, categories: {} },
   });
   loadSettings(elements);
   if (elements.keywordsEl) elements.keywordsEl.value = "";

@@ -35,6 +35,16 @@ customElements.define(
       >
         Parâmetros
       </button>
+      <button
+        type="button"
+        class="tab"
+        role="tab"
+        id="tab-insights"
+        aria-selected="false"
+        aria-controls="panel-insights"
+      >
+        Insights
+      </button>
     </nav>`;
     }
   }

@@ -14,7 +14,7 @@
 }
 
 body {
-  width: 380px;
+  width: 440px;
   max-height: 560px;
   min-height: 320px;
   margin: 0;
@@ -465,4 +465,57 @@ button:active {
 
 .blocked-list li.blocked-group ul li {
   border-bottom: 1px solid var(--border);
+}
+
+.insights-panel h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.insight-block {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.insight-block:last-child {
+  margin-bottom: 0;
+}
+
+.insight-title {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.insight-text,
+.insight-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.insight-sub {
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+
+.insight-empty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.insight-days {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--text-muted);
 }

@@ -3,6 +3,13 @@ let blockedAuthors = [];
 let settings = { ...DEFAULT_SETTINGS };
 let processDebounceTimer = null;
 let feedCounterEl = null;
+let insightPending = {
+  authors: {},
+  categories: {},
+  postsSeen: 0,
+  postsBlocked: 0,
+};
+let insightFlushTimer = null;
 
 function normalizeList(raw) {
   if (Array.isArray(raw)) {
@@ -104,6 +111,89 @@ function getTodayKey() {
     2,
     "0"
   )}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getAuthorFromPost(element) {
+  if (!element?.querySelector) return "Desconhecido";
+  const link = element.querySelector('a[href*="/in/"]');
+  const name = link?.textContent?.trim().slice(0, 80) ?? "";
+  return name || "Desconhecido";
+}
+
+function getCategoryFromPost(element) {
+  if (!element?.querySelector) return "text";
+  if (element.querySelector("video")) return "video";
+  if (
+    element.querySelector('[data-urn*="job"], [data-id*="job"], .job-card') ||
+    element.querySelector('a[href*="/jobs/"]')
+  )
+    return "job";
+  const hasArticleCard =
+    element.querySelector(".feed-shared-article") ||
+    element.querySelector('[data-urn*="share"] img') ||
+    (element.querySelector("img") && element.querySelector('a[href^="http"]'));
+  if (hasArticleCard) return "article";
+  if (element.querySelector("img")) return "image";
+  return "text";
+}
+
+function flushInsightsToStorage() {
+  insightFlushTimer = null;
+  chrome.storage.local.get(["sessionStats", "feedInsights"], (result) => {
+    const session = result.sessionStats ?? {};
+    const feed = result.feedInsights ?? {};
+    const feedAuthors = feed.authors ?? {};
+    const feedCategories = feed.categories ?? {};
+    const nextSession = {
+      postsSeen: (session.postsSeen ?? 0) + insightPending.postsSeen,
+      postsBlocked: (session.postsBlocked ?? 0) + insightPending.postsBlocked,
+      lastUpdated: Date.now(),
+    };
+    const nextAuthors = { ...feedAuthors };
+    for (const [name, delta] of Object.entries(insightPending.authors)) {
+      nextAuthors[name] = (nextAuthors[name] ?? 0) + delta;
+    }
+    const entries = Object.entries(nextAuthors).sort((a, b) => b[1] - a[1]);
+    const trimmed = Object.fromEntries(
+      entries.slice(0, FEED_INSIGHTS_AUTHORS_MAX)
+    );
+    const nextCategories = { ...feedCategories };
+    for (const [cat, delta] of Object.entries(insightPending.categories)) {
+      nextCategories[cat] = (nextCategories[cat] ?? 0) + delta;
+    }
+    chrome.storage.local.set({
+      sessionStats: nextSession,
+      feedInsights: {
+        authors: trimmed,
+        categories: nextCategories,
+        lastUpdated: Date.now(),
+      },
+    });
+    insightPending.authors = {};
+    insightPending.categories = {};
+    insightPending.postsSeen = 0;
+    insightPending.postsBlocked = 0;
+  });
+}
+
+function scheduleInsightsFlush() {
+  if (insightFlushTimer !== null) return;
+  insightFlushTimer = setTimeout(flushInsightsToStorage, INSIGHTS_THROTTLE_MS);
+}
+
+function recordPostForInsights(element) {
+  const author = getAuthorFromPost(element);
+  const category = getCategoryFromPost(element);
+  insightPending.postsSeen += 1;
+  insightPending.authors[author] = (insightPending.authors[author] ?? 0) + 1;
+  insightPending.categories[category] =
+    (insightPending.categories[category] ?? 0) + 1;
+  scheduleInsightsFlush();
+}
+
+function recordSessionBlocked() {
+  insightPending.postsBlocked += 1;
+  scheduleInsightsFlush();
 }
 
 function appendBlockedPost(snippet, keyword) {
@@ -257,6 +347,12 @@ function applyBlock(element, reason, keywordLabel, snippet) {
 
 function processPost(element) {
   if (element.getAttribute(BLOCKED_ATTR) !== null) return;
+
+  if (element.getAttribute(INSIGHT_ATTR) === null) {
+    recordPostForInsights(element);
+    element.setAttribute(INSIGHT_ATTR, "1");
+  }
+
   const text = element.textContent ?? "";
   const reason = getBlockReason(text);
   if (reason === null) return;
@@ -269,6 +365,7 @@ function processPost(element) {
 
   checkLimitThenBlock(keywordLabel, (allowed) => {
     if (!allowed) return;
+    recordSessionBlocked();
     applyBlock(element, reason, keywordLabel, snippet);
   });
 }

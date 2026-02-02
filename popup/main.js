@@ -25,6 +25,7 @@ import {
   clearAllData,
   bindToggles,
 } from "./params.js";
+import { renderInsights } from "./insights.js";
 
 initElements();
 
@@ -34,6 +35,7 @@ loadBlockedList(elements);
 loadStats(elements);
 renderSuggestions(elements, escapeHtml);
 bindToggles(elements);
+renderInsights(elements);
 
 elements.blockedListFilterEl?.addEventListener("input", () =>
   loadBlockedList(elements)
@@ -41,6 +43,7 @@ elements.blockedListFilterEl?.addEventListener("input", () =>
 elements.blockedGroupByEl?.addEventListener("change", () =>
   loadBlockedList(elements)
 );
+elements.tabInsights?.addEventListener("click", () => renderInsights(elements));
 
 document.addEventListener("keydown", (e) => {
   if (
@@ -66,6 +69,12 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
   if (areaName === "local" && changes.statsByKeyword) {
     renderStats(elements, changes.statsByKeyword.newValue ?? {});
+  }
+  if (
+    areaName === "local" &&
+    (changes.sessionStats ?? changes.feedInsights ?? changes.countByKeywordDay)
+  ) {
+    renderInsights(elements);
   }
 });
 

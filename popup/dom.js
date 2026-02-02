@@ -7,9 +7,11 @@ export const elements = {
   tabKeywords: null,
   tabBlocked: null,
   tabParams: null,
+  tabInsights: null,
   panelKeywords: null,
   panelBlocked: null,
   panelParams: null,
+  panelInsights: null,
   blockedCountEl: null,
   blockedCountPanelEl: null,
   blockedListEl: null,
@@ -51,6 +53,10 @@ export const elements = {
   importConfigBtn: null,
   restoreDefaultsBtn: null,
   clearAllDataBtn: null,
+  insightsSessionEl: null,
+  insightsBlockingEl: null,
+  insightsCategoryEl: null,
+  insightsAuthorsEl: null,
 };
 
 export function initElements() {
@@ -60,9 +66,11 @@ export function initElements() {
   elements.tabKeywords = $("tab-keywords");
   elements.tabBlocked = $("tab-blocked");
   elements.tabParams = $("tab-params");
+  elements.tabInsights = $("tab-insights");
   elements.panelKeywords = $("panel-keywords");
   elements.panelBlocked = $("panel-blocked");
   elements.panelParams = $("panel-params");
+  elements.panelInsights = $("panel-insights");
   elements.blockedCountEl = $("blocked-count");
   elements.blockedCountPanelEl = $("blocked-count-panel");
   elements.blockedListEl = $("blocked-list");
@@ -104,4 +112,8 @@ export function initElements() {
   elements.importConfigBtn = $("import-config-btn");
   elements.restoreDefaultsBtn = $("restore-defaults");
   elements.clearAllDataBtn = $("clear-all-data");
+  elements.insightsSessionEl = $("insights-session");
+  elements.insightsBlockingEl = $("insights-blocking");
+  elements.insightsCategoryEl = $("insights-category");
+  elements.insightsAuthorsEl = $("insights-authors");
 }
