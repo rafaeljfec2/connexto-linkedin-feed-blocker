@@ -86,9 +86,19 @@ Depois dos passos do seu sistema, faça no Chrome:
 1. Acesse o [Feed do LinkedIn](https://www.linkedin.com/feed/).
 2. Clique no ícone da extensão na barra de ferramentas do Chrome para abrir o popup.
 3. No campo de texto, digite uma palavra ou frase por linha (não diferencia maiúsculas de minúsculas).
-4. Clique em **Save** para salvar as palavras.
+4. Clique em **Salvar** para gravar as palavras.
 5. Recarregue a página do feed (F5 ou atualizar) para as novas palavras entrarem em vigor.
 6. Posts que contiverem qualquer uma das palavras ou frases salvas serão ocultados. Novos posts carregados ao rolar a página são processados automaticamente.
+
+## Como atualizar a extensão
+
+Depois de alterar o código (popup, content script, manifest etc.):
+
+1. Abra **chrome://extensions** no Chrome.
+2. Localize **LinkedIn Feed Blocker**.
+3. Clique no ícone **Atualizar** (seta circular) no card da extensão.
+
+O Chrome recarrega a extensão e as mudanças passam a valer. Se o feed do LinkedIn já estiver aberto, recarregue a página (F5) para o content script ser injetado de novo.
 
 ## Requisitos
 
