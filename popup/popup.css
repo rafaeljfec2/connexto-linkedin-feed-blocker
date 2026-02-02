@@ -349,3 +349,57 @@ button:active {
 .footer a:hover {
   text-decoration: underline;
 }
+
+.blocked-filter {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+}
+
+.blocked-filter:focus {
+  border-color: var(--accent);
+}
+
+.params-section input[type="time"],
+.params-section input[type="number"],
+.params-section select {
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.params-section select {
+  width: 100%;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.params-section input[type="file"] {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.blocked-list li.blocked-group {
+  padding: 8px 0;
+  border-bottom: none;
+}
+
+.blocked-list li.blocked-group ul {
+  margin: 4px 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.blocked-list li.blocked-group ul li {
+  border-bottom: 1px solid var(--border);
+}

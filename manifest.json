@@ -3,7 +3,7 @@
   "name": "LinkedIn Feed Blocker",
   "version": "1.0.0",
   "description": "Blocks feed posts containing user-defined keywords.",
-  "permissions": ["storage", "tabs"],
+  "permissions": ["storage", "tabs", "notifications"],
   "host_permissions": ["https://www.linkedin.com/feed/*"],
   "action": {
     "default_popup": "popup/popup.html",

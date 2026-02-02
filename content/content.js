@@ -2,6 +2,7 @@ let keywords = [];
 let blockedAuthors = [];
 let settings = { ...DEFAULT_SETTINGS };
 let processDebounceTimer = null;
+let feedCounterEl = null;
 
 function normalizeList(raw) {
   if (Array.isArray(raw)) {
@@ -64,11 +65,16 @@ function shouldBlock(text) {
 
 function getBlockReason(text) {
   const kw = getMatchingKeyword(text);
-  if (kw !== null && !settings.whitelistMode) {
+  const author = getMatchingAuthor(text);
+  const hasKw = kw !== null && !settings.whitelistMode;
+  const hasAuthor = author !== null;
+  if (settings.rulePriority === "authorFirst" && hasAuthor) {
+    return { type: "author", value: author };
+  }
+  if (hasKw) {
     return { type: "keyword", value: kw };
   }
-  const author = getMatchingAuthor(text);
-  if (author !== null) {
+  if (hasAuthor) {
     return { type: "author", value: author };
   }
   if (settings.whitelistMode && getMatchingKeyword(text) === null) {
@@ -77,30 +83,113 @@ function getBlockReason(text) {
   return null;
 }
 
+function isInsideBlockWindow() {
+  if (!settings.timeFilterEnabled) return false;
+  const now = new Date();
+  const [sh, sm] = (settings.timeFilterStart ?? "09:00").split(":").map(Number);
+  const [eh, em] = (settings.timeFilterEnd ?? "18:00").split(":").map(Number);
+  const min = now.getHours() * 60 + now.getMinutes();
+  const startMin = sh * 60 + sm;
+  const endMin = eh * 60 + em;
+  const inside =
+    startMin <= endMin
+      ? min >= startMin && min <= endMin
+      : min >= startMin || min <= endMin;
+  return settings.timeFilterBlockOutside ? !inside : inside;
+}
+
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function appendBlockedPost(snippet, keyword) {
-  chrome.storage.local.get(["blockedPosts", "statsByKeyword"], (result) => {
-    const list = Array.isArray(result.blockedPosts) ? result.blockedPosts : [];
-    list.unshift({ snippet, keyword, at: Date.now() });
-    const prev = result.statsByKeyword ?? null;
-    const stats =
-      prev && typeof prev === "object" && !Array.isArray(prev)
-        ? { ...prev }
-        : {};
-    stats[keyword] = (stats[keyword] ?? 0) + 1;
-    chrome.storage.local.set({
-      blockedPosts: list.slice(0, BLOCKED_LIST_MAX),
-      statsByKeyword: stats,
-    });
+  const storeInList = !settings.dontStoreSnippet;
+  chrome.storage.local.get(
+    ["blockedPosts", "statsByKeyword", "countByKeywordDay"],
+    (result) => {
+      const list = Array.isArray(result.blockedPosts)
+        ? result.blockedPosts
+        : [];
+      if (storeInList) {
+        list.unshift({ snippet, keyword, at: Date.now() });
+      }
+      const prev = result.statsByKeyword ?? null;
+      const stats =
+        prev && typeof prev === "object" && !Array.isArray(prev)
+          ? { ...prev }
+          : {};
+      stats[keyword] = (stats[keyword] ?? 0) + 1;
+      const dayKey = getTodayKey();
+      const countKey = `${keyword}:${dayKey}`;
+      const countPrev = result.countByKeywordDay ?? {};
+      const countNext = {
+        ...countPrev,
+        [countKey]: (countPrev[countKey] ?? 0) + 1,
+      };
+      chrome.storage.local.set({
+        blockedPosts: storeInList
+          ? list.slice(0, BLOCKED_LIST_MAX)
+          : result.blockedPosts ?? [],
+        statsByKeyword: stats,
+        countByKeywordDay: countNext,
+      });
+    }
+  );
+}
+
+function checkLimitThenBlock(keywordLabel, callback) {
+  if (!settings.limitPerKeywordEnabled) {
+    callback(true);
+    return;
+  }
+  const dayKey = getTodayKey();
+  const countKey = `${keywordLabel}:${dayKey}`;
+  chrome.storage.local.get(["countByKeywordDay"], (result) => {
+    const counts = result.countByKeywordDay ?? {};
+    const count = counts[countKey] ?? 0;
+    const max = Math.max(1, settings.limitPerKeywordMax ?? 10);
+    callback(count < max);
   });
 }
 
-function collapsePost(element, reason) {
+function updateFeedCounter() {
+  if (!settings.showFeedCounter) {
+    if (feedCounterEl) {
+      feedCounterEl.remove();
+      feedCounterEl = null;
+    }
+    return;
+  }
+  const feed = document.querySelector("main");
+  if (!feed) return;
+  const count = feed.querySelectorAll(`[${BLOCKED_ATTR}="1"]`).length;
+  if (!feedCounterEl) {
+    feedCounterEl = document.createElement("div");
+    feedCounterEl.className = "linkedin-feed-blocker-counter";
+    feedCounterEl.style.cssText =
+      "padding:8px 12px;margin-bottom:8px;background:#24282e;color:#9aa0a6;font-size:12px;border-radius:6px;";
+    feed.insertBefore(feedCounterEl, feed.firstChild);
+  }
+  feedCounterEl.textContent =
+    count === 0
+      ? "Nenhum post ocultado."
+      : `${count} post(s) ocultado(s) nesta sessão.`;
+}
+
+function collapsePost(element, reason, snippet) {
   if (element.querySelector(".linkedin-feed-blocker-bar")) return;
   const bar = document.createElement("div");
   bar.className = "linkedin-feed-blocker-bar";
   bar.style.cssText =
     "padding:12px;background:#24282e;color:#9aa0a6;font-size:13px;border-radius:8px;margin-bottom:8px;";
   bar.textContent = reason ? `Post ocultado por: ${reason}` : "Post ocultado";
+  if (settings.tooltipOnBlocked && snippet) {
+    bar.title = snippet;
+  }
   const btn = document.createElement("button");
   btn.textContent = "Expandir";
   btn.style.cssText =
@@ -119,28 +208,69 @@ function collapsePost(element, reason) {
   element.appendChild(wrapper);
 }
 
+function showUndoBar(element, keywordLabel, durationSec) {
+  const bar = document.createElement("div");
+  bar.className = "linkedin-feed-blocker-undo-bar";
+  bar.style.cssText =
+    "padding:8px 12px;margin-bottom:4px;background:#1a1d21;color:#9aa0a6;font-size:12px;border-radius:6px;";
+  bar.textContent = "Post ocultado. ";
+  const btn = document.createElement("button");
+  btn.textContent = "Desfazer";
+  btn.style.cssText =
+    "margin-left:8px;padding:2px 8px;cursor:pointer;background:#0a66c2;color:#fff;border:none;border-radius:4px;font-size:11px;";
+  btn.addEventListener("click", () => {
+    element.style.display = "";
+    element.setAttribute(BLOCKED_ATTR, "undone");
+    bar.remove();
+    updateFeedCounter();
+  });
+  bar.appendChild(btn);
+  element.parentNode?.insertBefore(bar, element);
+  setTimeout(() => bar.remove(), durationSec * 1000);
+}
+
+function applyBlock(element, reason, keywordLabel, snippet) {
+  element.setAttribute(BLOCKED_ATTR, "1");
+  appendBlockedPost(settings.dontStoreSnippet ? "" : snippet, keywordLabel);
+
+  if (settings.notificationOnly) {
+    element.style.borderLeft = "4px solid #f59e0b";
+    element.style.opacity = "0.85";
+    updateFeedCounter();
+    return;
+  }
+  if (settings.collapseInsteadOfHide) {
+    collapsePost(element, keywordLabel, snippet);
+    updateFeedCounter();
+    return;
+  }
+  element.style.display = "none";
+  if (settings.undoEnabled && settings.undoDurationSeconds > 0) {
+    showUndoBar(
+      element,
+      keywordLabel,
+      Math.min(60, Math.max(1, settings.undoDurationSeconds ?? 5))
+    );
+  }
+  updateFeedCounter();
+}
+
 function processPost(element) {
   if (element.getAttribute(BLOCKED_ATTR) !== null) return;
   const text = element.textContent ?? "";
   const reason = getBlockReason(text);
   if (reason === null) return;
-  element.setAttribute(BLOCKED_ATTR, "1");
+  if (isInsideBlockWindow()) return;
+
   let keywordLabel = "lista branca";
   if (reason.type === "keyword") keywordLabel = reason.value;
   else if (reason.type === "author") keywordLabel = `autor: ${reason.value}`;
   const snippet = text.trim().slice(0, 80).replaceAll(/\s+/g, " ");
-  appendBlockedPost(snippet, keywordLabel);
 
-  if (settings.notificationOnly) {
-    element.style.borderLeft = "4px solid #f59e0b";
-    element.style.opacity = "0.85";
-    return;
-  }
-  if (settings.collapseInsteadOfHide) {
-    collapsePost(element, keywordLabel);
-    return;
-  }
-  element.style.display = "none";
+  checkLimitThenBlock(keywordLabel, (allowed) => {
+    if (!allowed) return;
+    applyBlock(element, reason, keywordLabel, snippet);
+  });
 }
 
 function collectPosts(root) {
@@ -162,6 +292,7 @@ function runProcess() {
   const feed = document.querySelector("main");
   if (!feed) return;
   feed.querySelectorAll(POST_SELECTOR).forEach(processPost);
+  updateFeedCounter();
 }
 
 function scheduleProcess(mutations) {
