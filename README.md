@@ -10,8 +10,10 @@ connexto-linkedin-feed-blocker/
 ├── background.js       # Service worker: badge com contagem de bloqueados
 ├── popup/
 │   ├── popup.html      # Interface do popup (Palavras-chave, Bloqueados, Parâmetros)
-│   └── popup.js        # Carrega/salva palavras, parâmetros e lista bloqueada
+│   ├── popup.css       # Estilos do popup
+│   └── popup.js        # Lógica: palavras, parâmetros, lista bloqueada, export/import
 ├── content/
+│   ├── constants.js    # Constantes (seletor, debounce, defaults)
 │   └── content.js      # Observador do feed e lógica de bloqueio (regex, lista branca, autor, colapsar, etc.)
 ├── scripts/
 │   ├── load-in-chrome.sh   # Abre a página de extensões do Chrome e exibe o caminho da pasta (Linux/macOS)

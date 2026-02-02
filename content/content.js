@@ -1,18 +1,7 @@
-const BLOCKED_ATTR = "data-linkedin-feed-blocker";
-const POST_SELECTOR = 'main div[data-urn^="urn:li:activity"]';
-
 let keywords = [];
 let blockedAuthors = [];
-let settings = {
-  paused: false,
-  whitelistMode: false,
-  useRegex: false,
-  collapseInsteadOfHide: false,
-  notificationOnly: false,
-};
+let settings = { ...DEFAULT_SETTINGS };
 let processDebounceTimer = null;
-const DEBOUNCE_MS = 100;
-const BLOCKED_LIST_MAX = 50;
 
 function normalizeList(raw) {
   if (Array.isArray(raw)) {
@@ -111,22 +100,21 @@ function collapsePost(element, reason) {
   bar.className = "linkedin-feed-blocker-bar";
   bar.style.cssText =
     "padding:12px;background:#24282e;color:#9aa0a6;font-size:13px;border-radius:8px;margin-bottom:8px;";
-  const label = reason ? `Post ocultado por: ${reason}` : "Post ocultado";
-  bar.textContent = label;
+  bar.textContent = reason ? `Post ocultado por: ${reason}` : "Post ocultado";
   const btn = document.createElement("button");
   btn.textContent = "Expandir";
   btn.style.cssText =
     "margin-left:12px;padding:4px 10px;cursor:pointer;background:#0a66c2;color:#fff;border:none;border-radius:6px;font-size:12px;";
-  btn.addEventListener("click", () => {
-    bar.remove();
-    wrapper.style.display = "";
-  });
-  bar.appendChild(btn);
   const wrapper = document.createElement("div");
   wrapper.style.display = "none";
   while (element.firstChild) {
     wrapper.appendChild(element.firstChild);
   }
+  btn.addEventListener("click", () => {
+    bar.remove();
+    wrapper.style.display = "";
+  });
+  bar.appendChild(btn);
   element.appendChild(bar);
   element.appendChild(wrapper);
 }
@@ -164,8 +152,7 @@ function collectPosts(root) {
 function processNodes(nodes) {
   for (const node of nodes) {
     if (!(node instanceof Element)) continue;
-    const posts = collectPosts(node);
-    for (const post of posts) processPost(post);
+    for (const post of collectPosts(node)) processPost(post);
   }
 }
 
@@ -174,8 +161,7 @@ function runProcess() {
   if (settings.paused) return;
   const feed = document.querySelector("main");
   if (!feed) return;
-  const posts = feed.querySelectorAll(POST_SELECTOR);
-  posts.forEach(processPost);
+  feed.querySelectorAll(POST_SELECTOR).forEach(processPost);
 }
 
 function scheduleProcess(mutations) {
