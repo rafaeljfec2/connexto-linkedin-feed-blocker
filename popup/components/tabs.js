@@ -1,3 +1,5 @@
+import { t } from "../i18n.js";
+
 customElements.define(
   "tab-nav",
   class TabNav extends HTMLElement {
@@ -13,7 +15,7 @@ customElements.define(
         aria-selected="true"
         aria-controls="panel-dashboard"
       >
-        Dashboard
+        ${t("tabDashboard")}
       </button>
       <button
         type="button"
@@ -23,7 +25,7 @@ customElements.define(
         aria-selected="false"
         aria-controls="panel-keywords"
       >
-        Palavras-chave
+        ${t("tabKeywords")}
       </button>
       <button
         type="button"
@@ -33,7 +35,7 @@ customElements.define(
         aria-selected="false"
         aria-controls="panel-blocked"
       >
-        Bloqueados (<span id="blocked-count">0</span>)
+        ${t("tabBlocked")} (<span id="blocked-count">0</span>)
       </button>
       <button
         type="button"
@@ -43,7 +45,7 @@ customElements.define(
         aria-selected="false"
         aria-controls="panel-insights"
       >
-        Insights
+        ${t("tabInsights")}
       </button>
       <button
         type="button"
@@ -53,7 +55,7 @@ customElements.define(
         aria-selected="false"
         aria-controls="panel-params"
       >
-        Parâmetros
+        ${t("tabParams")}
       </button>
     </nav>`;
     }

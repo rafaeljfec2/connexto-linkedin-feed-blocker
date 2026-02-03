@@ -1,4 +1,5 @@
 import { escapeHtml } from "./utils.js";
+import { t } from "./i18n.js";
 
 const CATEGORY_LABELS = {
   article: "Artigo",
@@ -36,14 +37,14 @@ function renderSessionSection(elements, sessionStats) {
   const pct = seen > 0 ? Math.round((blocked / seen) * 100) : 0;
   if (seen === 0 && blocked === 0) {
     el.innerHTML = `
-      <p class="dashboard-chart-title">Sessão atual</p>
-      <p class="dashboard-empty">Role o feed no LinkedIn para ver métricas.</p>`;
+      <p class="dashboard-chart-title">${t("dashboardCurrentSession")}</p>
+      <p class="dashboard-empty">${t("dashboardEmpty")}</p>`;
     return;
   }
   const seenPct = seen > 0 ? Math.round(((seen - blocked) / seen) * 100) : 0;
   const blockedPct = seen > 0 ? Math.min(100, pct) : 0;
   el.innerHTML = `
-    <p class="dashboard-chart-title">Sessão atual</p>
+    <p class="dashboard-chart-title">${t("dashboardCurrentSession")}</p>
     <p class="dashboard-legend">${escapeHtml(
       String(seen)
     )} posts · ${escapeHtml(String(blocked))} ocultados (${escapeHtml(
@@ -84,7 +85,7 @@ function renderBlockingChart(elements, countByKeywordDay) {
     )
     .join("");
   el.innerHTML = `
-    <p class="dashboard-chart-title">Bloqueios (últimos 7 dias)</p>
+    <p class="dashboard-chart-title">${t("dashboardBlocksLast7")}</p>
     <div class="dashboard-bars">${bars}</div>`;
 }
 
@@ -96,8 +97,8 @@ function renderKeywordsChart(elements, statsByKeyword) {
     .slice(0, 6);
   if (entries.length === 0) {
     el.innerHTML = `
-      <p class="dashboard-chart-title">Top palavras bloqueadas</p>
-      <p class="dashboard-empty">Nenhum bloqueio ainda.</p>`;
+      <p class="dashboard-chart-title">${t("dashboardTopBlockedWords")}</p>
+      <p class="dashboard-empty">${t("dashboardNoneYet")}</p>`;
     return;
   }
   const max = Math.max(1, ...entries.map(([, n]) => n));
@@ -116,7 +117,7 @@ function renderKeywordsChart(elements, statsByKeyword) {
     )
     .join("");
   el.innerHTML = `
-    <p class="dashboard-chart-title">Top palavras bloqueadas</p>
+    <p class="dashboard-chart-title">${t("dashboardTopBlockedWords")}</p>
     <div class="dashboard-bars">${rows}</div>`;
 }
 
@@ -129,8 +130,8 @@ function renderCategoryChart(elements, feedInsights) {
     .sort((a, b) => b[1] - a[1]);
   if (entries.length === 0) {
     el.innerHTML = `
-      <p class="dashboard-chart-title">Categoria que mais recebi</p>
-      <p class="dashboard-empty">Role o feed para ver tipos.</p>`;
+      <p class="dashboard-chart-title">${t("dashboardMostReceivedCategory")}</p>
+      <p class="dashboard-empty">${t("insightsCategoryEmpty")}</p>`;
     return;
   }
   const max = Math.max(1, ...entries.map(([, n]) => n));
@@ -149,7 +150,7 @@ function renderCategoryChart(elements, feedInsights) {
     )
     .join("");
   el.innerHTML = `
-    <p class="dashboard-chart-title">Categoria que mais recebi</p>
+    <p class="dashboard-chart-title">${t("dashboardMostReceivedCategory")}</p>
     <div class="dashboard-bars">${rows}</div>`;
 }
 
@@ -163,8 +164,8 @@ function renderAuthorsChart(elements, feedInsights) {
     .slice(0, 6);
   if (entries.length === 0) {
     el.innerHTML = `
-      <p class="dashboard-chart-title">Autor que mais apareceu</p>
-      <p class="dashboard-empty">Role o feed para ver autores.</p>`;
+      <p class="dashboard-chart-title">${t("dashboardAuthorMostSeen")}</p>
+      <p class="dashboard-empty">${t("insightsAuthorsEmpty")}</p>`;
     return;
   }
   const max = Math.max(1, ...entries.map(([, n]) => n));
@@ -183,7 +184,7 @@ function renderAuthorsChart(elements, feedInsights) {
     )
     .join("");
   el.innerHTML = `
-    <p class="dashboard-chart-title">Autor que mais apareceu</p>
+    <p class="dashboard-chart-title">${t("dashboardAuthorMostSeen")}</p>
     <div class="dashboard-bars">${rows}</div>`;
 }
 

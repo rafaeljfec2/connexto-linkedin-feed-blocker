@@ -1,3 +1,5 @@
+import { t } from "../i18n.js";
+
 customElements.define(
   "extension-footer",
   class ExtensionFooter extends HTMLElement {
@@ -5,7 +7,7 @@ customElements.define(
       if (this.hasChildNodes()) return;
       this.innerHTML = `
     <footer class="footer">
-      Desenvolvido por
+      ${t("extDevBy")}
       <a
         href="https://github.com/rafaeljfec2"
         target="_blank"

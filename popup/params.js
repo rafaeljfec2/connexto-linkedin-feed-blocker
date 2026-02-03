@@ -8,6 +8,7 @@ import {
   escapeHtml,
 } from "./utils.js";
 import { renderBlockedList, loadBlockedList } from "./blocked.js";
+import { t } from "./i18n.js";
 
 const TOGGLE_IDS = [
   "toggle-paused",
@@ -146,13 +147,13 @@ export function saveParams(elements) {
           );
           return;
         }
-        showFeedback(elements.feedbackParamsEl, "Salvo.");
+        showFeedback(elements.feedbackParamsEl, t("feedbackSaved"));
         if (ui.notifyOnSave && chrome.notifications) {
           chrome.notifications
             .create({
               type: "basic",
-              title: "LinkedIn Feed Blocker",
-              message: "Parâmetros salvos.",
+              title: chrome.i18n.getMessage("extName"),
+              message: t("paramsSaved"),
             })
             .catch(() => {});
         }

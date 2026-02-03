@@ -1,21 +1,19 @@
+import { t } from "../i18n.js";
+
 customElements.define(
   "keywords-panel",
   class KeywordsPanel extends HTMLElement {
     connectedCallback() {
       if (this.hasChildNodes()) return;
+      const placeholder = t("placeholderKeywords").replaceAll("\n", "&#10;");
       this.innerHTML = `
     <main id="panel-keywords" class="panel" role="tabpanel">
-      <label for="keywords">Palavras-chave (uma por linha)</label>
-      <textarea
-        id="keywords"
-        placeholder="ex: promoção&#10;vagas&#10;recrutamento"
-      ></textarea>
-      <p class="hint">
-        Não diferencia maiúsculas de minúsculas. Salve e o feed recarrega.
-      </p>
+      <label for="keywords">${t("labelKeywordsOnePerLine")}</label>
+      <textarea id="keywords" placeholder="${placeholder}"></textarea>
+      <p class="hint">${t("hintCaseInsensitive")}</p>
       <div class="actions">
-        <button type="button" id="save" class="primary">Salvar</button>
-        <span class="feedback" id="feedback">Salvo.</span>
+        <button type="button" id="save" class="primary">${t("btnSave")}</button>
+        <span class="feedback" id="feedback">${t("feedbackSaved")}</span>
       </div>
     </main>`;
     }

@@ -1,0 +1,144 @@
+{
+  "extName": { "message": "LinkedIn Feed Blocker" },
+  "extDescription": {
+    "message": "Palabras o frases que ocultan publicaciones en el feed"
+  },
+  "extDevBy": { "message": "Desarrollado por" },
+  "tabDashboard": { "message": "Panel" },
+  "tabKeywords": { "message": "Palabras clave" },
+  "tabBlocked": { "message": "Bloqueados" },
+  "tabInsights": { "message": "Insights" },
+  "tabParams": { "message": "Parámetros" },
+  "labelKeywordsOnePerLine": { "message": "Palabras clave (una por línea)" },
+  "placeholderKeywords": {
+    "message": "ej: promoción\nvacantes\nreclutamiento"
+  },
+  "hintCaseInsensitive": {
+    "message": "No distingue mayúsculas. Guarda y el feed se recarga."
+  },
+  "btnSave": { "message": "Guardar" },
+  "feedbackSaved": { "message": "Guardado." },
+  "postsBlockedCount": { "message": "Publicaciones bloqueadas" },
+  "placeholderFilterBlocked": { "message": "Filtrar por palabra o texto..." },
+  "noBlockedYet": { "message": "Aún no hay publicaciones bloqueadas." },
+  "btnClearList": { "message": "Limpiar lista" },
+  "btnExportJson": { "message": "Exportar (JSON)" },
+  "summaryBlocking": { "message": "Bloqueo" },
+  "sectionBehavior": { "message": "Comportamiento" },
+  "labelPauseBlocking": { "message": "Pausar bloqueo" },
+  "labelWhitelistMode": {
+    "message": "Modo lista blanca (solo mostrar posts con palabra clave)"
+  },
+  "labelUseRegex": { "message": "Usar regex en las palabras" },
+  "labelCollapseInsteadOfHide": { "message": "Colapsar en vez de ocultar" },
+  "labelNotificationOnly": {
+    "message": "Solo notificación (marcar sin ocultar)"
+  },
+  "sectionBlockByAuthor": { "message": "Bloquear por autor" },
+  "labelNamesOnePerLine": { "message": "Nombres o textos (uno por línea)" },
+  "placeholderAuthorNames": { "message": "Nombre del perfil\nempresa X" },
+  "sectionPriority": { "message": "Prioridad" },
+  "labelWhenAuthorAndWordMatch": {
+    "message": "Cuando coinciden autor y palabra"
+  },
+  "optionKeywordFirst": { "message": "Palabra primero" },
+  "optionAuthorFirst": { "message": "Autor primero" },
+  "sectionTime": { "message": "Horario" },
+  "labelTimeFilter": { "message": "Filtrar por horario" },
+  "hintTimeFilter": {
+    "message": "Cuando está activo: bloquear solo fuera del intervalo (ej.: no bloquear 9h–18h)."
+  },
+  "labelTimeFrom": { "message": "Desde" },
+  "labelTimeTo": { "message": "Hasta" },
+  "sectionLimits": { "message": "Límites" },
+  "labelLimitPerKeyword": { "message": "Límite por palabra/día" },
+  "labelMaxBlocksPerKeyword": { "message": "Máx. bloqueos por palabra/día" },
+  "summaryKeywords": { "message": "Palabras clave" },
+  "sectionImportExport": { "message": "Importar / exportar palabras" },
+  "btnExportKeywords": { "message": "Exportar palabras (.txt)" },
+  "labelPasteToImport": {
+    "message": "Pegar texto para importar (uno por línea)"
+  },
+  "placeholderPasteAndAdd": { "message": "Pega aquí y haz clic en Añadir" },
+  "btnAddToKeywords": { "message": "Añadir a las palabras" },
+  "sectionSuggestions": { "message": "Sugerencias" },
+  "hintClickToAdd": {
+    "message": "Haz clic para añadir a la lista de palabras clave."
+  },
+  "summaryInterfaceFeed": { "message": "Interfaz en el feed" },
+  "sectionFeedUndo": { "message": "Feed y deshacer" },
+  "labelFeedCounter": { "message": "Contador en el feed (X ocultos)" },
+  "labelUndoButton": { "message": "Botón Deshacer al ocultar" },
+  "labelUndoDuration": { "message": "Duración Deshacer (seg)" },
+  "labelTooltipCollapsed": { "message": "Tooltip en post colapsado" },
+  "labelGroupBy": { "message": "Agrupar por" },
+  "optionGroupNone": { "message": "Ninguno" },
+  "optionGroupFlatList": { "message": "Lista plana" },
+  "optionGroupKeyword": { "message": "Palabra clave" },
+  "sectionStats": { "message": "Estadísticas" },
+  "statsEmpty": { "message": "Ningún bloqueo registrado." },
+  "btnImportConfigRestore": { "message": "Restaurar configuración" },
+  "hintPrivacyNoSnippets": {
+    "message": "Solo cuenta en estadísticas; la lista no muestra fragmentos."
+  },
+  "sectionShortcutsNotify": { "message": "Atajos y notificaciones" },
+  "sectionPrivacy": { "message": "Privacidad" },
+  "sectionBackup": { "message": "Copia de seguridad y restaurar" },
+  "sectionClearData": { "message": "Borrar datos" },
+  "btnExportAll": { "message": "Exportar todo (JSON)" },
+  "summaryPopupExt": { "message": "Popup y extensión" },
+  "labelCtrlEnterSave": { "message": "Ctrl+Enter guarda (popup)" },
+  "labelBadgeWhenPaused": { "message": "Badge cuando pausado" },
+  "optionBadgeHide": { "message": "Ocultar" },
+  "optionBadgeShow": { "message": "Mostrar" },
+  "labelNotifyOnSave": { "message": "Notificación al guardar" },
+  "summaryDataPrivacy": { "message": "Datos y privacidad" },
+  "labelDontStoreSnippet": {
+    "message": "No guardar texto en la lista bloqueados"
+  },
+  "sectionBackupRestore": { "message": "Copia de seguridad / Restaurar" },
+  "labelRestoreFromFile": { "message": "Restaurar desde archivo" },
+  "btnRestoreDefaults": { "message": "Restaurar valores por defecto" },
+  "btnExportConfig": { "message": "Exportar configuración" },
+  "btnImportConfig": { "message": "Importar configuración" },
+  "btnClearAllData": { "message": "Borrar todos los datos" },
+  "btnSaveParams": { "message": "Guardar parámetros" },
+  "paramsSaved": { "message": "Parámetros guardados." },
+  "feedbackParams": { "message": "Guardar parámetros" },
+  "contentBlockedMessage": {
+    "message": "Contenido bloqueado por el usuario mediante LinkedIn Feed Blocker"
+  },
+  "contentHiddenBy": { "message": "Ocultado por" },
+  "contentExpand": { "message": "Expandir" },
+  "contentPostHidden": { "message": "Publicación ocultada." },
+  "contentUndo": { "message": "Deshacer" },
+  "contentNoPostsHidden": { "message": "Ninguna publicación oculta." },
+  "contentPostsHiddenCount": {
+    "message": "$1 publicación(es) oculta(s) en esta sesión."
+  },
+  "contentUnknownAuthor": { "message": "Desconocido" },
+  "dashboardCurrentSession": { "message": "Sesión actual" },
+  "dashboardBlocksLast7": { "message": "Bloqueos (últimos 7 días)" },
+  "dashboardTopBlockedWords": { "message": "Top palabras bloqueadas" },
+  "dashboardMostReceivedCategory": { "message": "Categoría que más recibí" },
+  "dashboardAuthorMostSeen": { "message": "Autor que más apareció" },
+  "insightsSessionTitle": { "message": "Sesión actual" },
+  "insightsSessionEmpty": {
+    "message": "No hay datos en esta sesión. Desplázate por el feed en LinkedIn para ver métricas."
+  },
+  "insightsCategoryTitle": { "message": "Categoría que más recibí" },
+  "insightsCategoryEmpty": {
+    "message": "Desplázate por el feed para ver tipos de contenido."
+  },
+  "insightsAuthorsTitle": { "message": "Autor que más apareció" },
+  "insightsAuthorsEmpty": {
+    "message": "Desplázate por el feed para ver autores."
+  },
+  "insightsTitle": { "message": "Insights del feed" },
+  "dashboardTitle": { "message": "Panel" },
+  "dashboardEmpty": {
+    "message": "Desplázate por el feed en LinkedIn para ver métricas."
+  },
+  "dashboardNoneYet": { "message": "Aún no hay bloqueos." },
+  "cmdOpenPopup": { "message": "Abrir popup de la extensión" }
+}

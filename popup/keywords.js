@@ -5,11 +5,12 @@ import {
   reloadFeedIfActive,
   downloadBlob,
 } from "./utils.js";
+import { t } from "./i18n.js";
 
 export function saveKeywords(elements) {
   const lines = parseLines(elements.keywordsEl?.value ?? "");
   chrome.storage.sync.set({ keywords: lines });
-  showFeedback(elements.feedbackEl, "Salvo.");
+  showFeedback(elements.feedbackEl, t("feedbackSaved"));
   chrome.storage.sync.get(["settings"], (r) => {
     if (r.settings?.notifyOnSave && chrome.notifications) {
       chrome.notifications

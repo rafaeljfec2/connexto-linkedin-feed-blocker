@@ -131,10 +131,13 @@ function getTodayKey() {
 }
 
 function getAuthorFromPost(element) {
-  if (!element?.querySelector) return "Desconhecido";
+  if (!element?.querySelector)
+    return chrome.i18n.getMessage("contentUnknownAuthor") ?? "Desconhecido";
   const link = element.querySelector('a[href*="/in/"]');
   const name = link?.textContent?.trim().slice(0, 80) ?? "";
-  return name || "Desconhecido";
+  return (
+    name || (chrome.i18n.getMessage("contentUnknownAuthor") ?? "Desconhecido")
+  );
 }
 
 function getCategoryFromPost(element) {
@@ -355,14 +358,13 @@ function updateFeedCounter() {
       "padding:8px 12px;margin-bottom:8px;background:#24282e;color:#9aa0a6;font-size:12px;border-radius:6px;";
     feed.insertBefore(feedCounterEl, feed.firstChild);
   }
-  feedCounterEl.textContent =
-    count === 0
-      ? "Nenhum post ocultado."
-      : `${count} post(s) ocultado(s) nesta sessão.`;
+  const noPosts =
+    chrome.i18n.getMessage("contentNoPostsHidden") ?? "Nenhum post ocultado.";
+  const withCount =
+    chrome.i18n.getMessage("contentPostsHiddenCount", [String(count)]) ??
+    `${count} post(s) ocultado(s) nesta sessão.`;
+  feedCounterEl.textContent = count === 0 ? noPosts : withCount;
 }
-
-const COLLAPSED_MESSAGE =
-  "Conteúdo bloqueado pelo usuário através do LinkedIn Feed Blocker";
 
 function collapsePost(element, reason, snippet) {
   if (element.querySelector(".linkedin-feed-blocker-bar")) return;
@@ -370,16 +372,20 @@ function collapsePost(element, reason, snippet) {
   bar.className = "linkedin-feed-blocker-bar";
   bar.style.cssText =
     "padding:12px;background:#24282e;color:#9aa0a6;font-size:13px;border-radius:8px;margin-bottom:8px;";
+  const blockedMsg =
+    chrome.i18n.getMessage("contentBlockedMessage") ??
+    "Conteúdo bloqueado pelo usuário através do LinkedIn Feed Blocker";
+  const hiddenBy = chrome.i18n.getMessage("contentHiddenBy") ?? "Ocultado por";
   const msgSpan = document.createElement("span");
   msgSpan.textContent = reason
-    ? `${COLLAPSED_MESSAGE} (Ocultado por: ${reason})`
-    : COLLAPSED_MESSAGE;
+    ? `${blockedMsg} (${hiddenBy}: ${reason})`
+    : blockedMsg;
   bar.appendChild(msgSpan);
   if (settings.tooltipOnBlocked && snippet) {
     bar.title = snippet;
   }
   const btn = document.createElement("button");
-  btn.textContent = "Expandir";
+  btn.textContent = chrome.i18n.getMessage("contentExpand") ?? "Expandir";
   btn.style.cssText =
     "margin-left:12px;padding:4px 10px;cursor:pointer;background:#0a66c2;color:#fff;border:none;border-radius:6px;font-size:12px;";
   bar.appendChild(btn);
@@ -401,9 +407,11 @@ function showUndoBar(element, keywordLabel, durationSec) {
   bar.className = "linkedin-feed-blocker-undo-bar";
   bar.style.cssText =
     "padding:8px 12px;margin-bottom:4px;background:#1a1d21;color:#9aa0a6;font-size:12px;border-radius:6px;";
-  bar.textContent = "Post ocultado. ";
+  const postHidden =
+    chrome.i18n.getMessage("contentPostHidden") ?? "Post ocultado.";
+  bar.textContent = postHidden + " ";
   const btn = document.createElement("button");
-  btn.textContent = "Desfazer";
+  btn.textContent = chrome.i18n.getMessage("contentUndo") ?? "Desfazer";
   btn.style.cssText =
     "margin-left:8px;padding:2px 8px;cursor:pointer;background:#0a66c2;color:#fff;border:none;border-radius:4px;font-size:11px;";
   btn.addEventListener("click", () => {

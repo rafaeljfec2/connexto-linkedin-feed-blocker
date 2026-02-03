@@ -1,3 +1,5 @@
+import { t } from "../i18n.js";
+
 customElements.define(
   "extension-header",
   class ExtensionHeader extends HTMLElement {
@@ -5,8 +7,8 @@ customElements.define(
       if (this.hasChildNodes()) return;
       this.innerHTML = `
     <header class="header">
-      <h1>LinkedIn Feed Blocker</h1>
-      <p>Palavras ou frases que ocultam posts no feed</p>
+      <h1>${t("extName")}</h1>
+      <p>${t("extDescription")}</p>
     </header>`;
     }
   }

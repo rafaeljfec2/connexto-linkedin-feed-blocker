@@ -1,0 +1,132 @@
+{
+  "extName": { "message": "LinkedIn Feed Blocker" },
+  "extDescription": {
+    "message": "Words or phrases that hide posts in the feed"
+  },
+  "extDevBy": { "message": "Developed by" },
+  "tabDashboard": { "message": "Dashboard" },
+  "tabKeywords": { "message": "Keywords" },
+  "tabBlocked": { "message": "Blocked" },
+  "tabInsights": { "message": "Insights" },
+  "tabParams": { "message": "Parameters" },
+  "labelKeywordsOnePerLine": { "message": "Keywords (one per line)" },
+  "placeholderKeywords": { "message": "e.g. promotion\njobs\nrecruitment" },
+  "hintCaseInsensitive": {
+    "message": "Case insensitive. Save and the feed reloads."
+  },
+  "btnSave": { "message": "Save" },
+  "feedbackSaved": { "message": "Saved." },
+  "postsBlockedCount": { "message": "Blocked posts" },
+  "placeholderFilterBlocked": { "message": "Filter by keyword or text..." },
+  "noBlockedYet": { "message": "No blocked posts yet." },
+  "btnClearList": { "message": "Clear list" },
+  "btnExportJson": { "message": "Export (JSON)" },
+  "summaryBlocking": { "message": "Blocking" },
+  "sectionBehavior": { "message": "Behavior" },
+  "labelPauseBlocking": { "message": "Pause blocking" },
+  "labelWhitelistMode": {
+    "message": "Whitelist mode (only show posts with keyword)"
+  },
+  "labelUseRegex": { "message": "Use regex in words" },
+  "labelCollapseInsteadOfHide": { "message": "Collapse instead of hide" },
+  "labelNotificationOnly": {
+    "message": "Notification only (mark without hiding)"
+  },
+  "sectionBlockByAuthor": { "message": "Block by author" },
+  "labelNamesOnePerLine": { "message": "Names or text (one per line)" },
+  "placeholderAuthorNames": { "message": "Profile name\ncompany X" },
+  "sectionPriority": { "message": "Priority" },
+  "labelWhenAuthorAndWordMatch": { "message": "When author and keyword match" },
+  "optionKeywordFirst": { "message": "Keyword first" },
+  "optionAuthorFirst": { "message": "Author first" },
+  "sectionTime": { "message": "Time" },
+  "labelTimeFilter": { "message": "Filter by time" },
+  "hintTimeFilter": {
+    "message": "When active: block only outside the interval (e.g. do not block 9am–6pm)."
+  },
+  "labelTimeFrom": { "message": "From" },
+  "labelTimeTo": { "message": "To" },
+  "sectionLimits": { "message": "Limits" },
+  "labelLimitPerKeyword": { "message": "Limit per keyword/day" },
+  "labelMaxBlocksPerKeyword": { "message": "Max blocks per keyword/day" },
+  "summaryKeywords": { "message": "Keywords" },
+  "sectionImportExport": { "message": "Import / export keywords" },
+  "btnExportKeywords": { "message": "Export keywords (.txt)" },
+  "labelPasteToImport": { "message": "Paste text to import (one per line)" },
+  "placeholderPasteAndAdd": { "message": "Paste here and click Add" },
+  "btnAddToKeywords": { "message": "Add to keywords" },
+  "sectionSuggestions": { "message": "Suggestions" },
+  "hintClickToAdd": { "message": "Click to add to keyword list." },
+  "summaryInterfaceFeed": { "message": "Feed interface" },
+  "sectionFeedUndo": { "message": "Feed and undo" },
+  "labelFeedCounter": { "message": "Feed counter (X hidden)" },
+  "labelUndoButton": { "message": "Undo button when hiding" },
+  "labelUndoDuration": { "message": "Undo duration (sec)" },
+  "labelTooltipCollapsed": { "message": "Tooltip on collapsed post" },
+  "labelGroupBy": { "message": "Group by" },
+  "optionGroupNone": { "message": "None" },
+  "optionGroupFlatList": { "message": "Flat list" },
+  "optionGroupKeyword": { "message": "Keyword" },
+  "sectionStats": { "message": "Statistics" },
+  "statsEmpty": { "message": "No blocks recorded." },
+  "btnImportConfigRestore": { "message": "Restore configuration" },
+  "hintPrivacyNoSnippets": {
+    "message": "Only counts in statistics; list does not show snippets."
+  },
+  "sectionShortcutsNotify": { "message": "Shortcuts and notifications" },
+  "sectionPrivacy": { "message": "Privacy" },
+  "sectionBackup": { "message": "Backup and restore" },
+  "sectionClearData": { "message": "Clear data" },
+  "btnExportAll": { "message": "Export all (JSON)" },
+  "summaryPopupExt": { "message": "Popup and extension" },
+  "labelCtrlEnterSave": { "message": "Ctrl+Enter saves (popup)" },
+  "labelBadgeWhenPaused": { "message": "Badge when paused" },
+  "optionBadgeHide": { "message": "Hide" },
+  "optionBadgeShow": { "message": "Show" },
+  "labelNotifyOnSave": { "message": "Notification on save" },
+  "summaryDataPrivacy": { "message": "Data and privacy" },
+  "labelDontStoreSnippet": { "message": "Do not store text in blocked list" },
+  "sectionBackupRestore": { "message": "Backup / Restore" },
+  "labelRestoreFromFile": { "message": "Restore from file" },
+  "btnRestoreDefaults": { "message": "Restore defaults" },
+  "btnExportConfig": { "message": "Export configuration" },
+  "btnImportConfig": { "message": "Import configuration" },
+  "btnClearAllData": { "message": "Clear all data" },
+  "btnSaveParams": { "message": "Save parameters" },
+  "paramsSaved": { "message": "Parameters saved." },
+  "feedbackParams": { "message": "Save parameters" },
+  "contentBlockedMessage": {
+    "message": "Content blocked by the user via LinkedIn Feed Blocker"
+  },
+  "contentHiddenBy": { "message": "Hidden by" },
+  "contentExpand": { "message": "Expand" },
+  "contentPostHidden": { "message": "Post hidden." },
+  "contentUndo": { "message": "Undo" },
+  "contentNoPostsHidden": { "message": "No posts hidden." },
+  "contentPostsHiddenCount": {
+    "message": "$1 post(s) hidden in this session."
+  },
+  "contentUnknownAuthor": { "message": "Unknown" },
+  "dashboardCurrentSession": { "message": "Current session" },
+  "dashboardBlocksLast7": { "message": "Blocks (last 7 days)" },
+  "dashboardTopBlockedWords": { "message": "Top blocked words" },
+  "dashboardMostReceivedCategory": { "message": "Most received category" },
+  "dashboardAuthorMostSeen": { "message": "Author most seen" },
+  "insightsSessionTitle": { "message": "Current session" },
+  "insightsSessionEmpty": {
+    "message": "No data this session. Scroll the feed on LinkedIn to see metrics."
+  },
+  "insightsCategoryTitle": { "message": "Most received category" },
+  "insightsCategoryEmpty": {
+    "message": "Scroll the feed to see content types."
+  },
+  "insightsAuthorsTitle": { "message": "Author most seen" },
+  "insightsAuthorsEmpty": { "message": "Scroll the feed to see authors." },
+  "insightsTitle": { "message": "Feed insights" },
+  "dashboardTitle": { "message": "Dashboard" },
+  "dashboardEmpty": {
+    "message": "Scroll the feed on LinkedIn to see metrics."
+  },
+  "dashboardNoneYet": { "message": "No blocks yet." },
+  "cmdOpenPopup": { "message": "Open extension popup" }
+}

@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "LinkedIn Feed Blocker",
+  "name": "__MSG_extName__",
   "version": "1.0.0",
-  "description": "Blocks feed posts containing user-defined keywords.",
+  "description": "__MSG_extDescription__",
+  "default_locale": "pt_BR",
   "icons": {
     "16": "assets/Gemini_Generated_Image_q6f89lq6f89lq6f8.png",
     "48": "assets/Gemini_Generated_Image_q6f89lq6f89lq6f8.png",
@@ -12,7 +13,7 @@
   "host_permissions": ["https://www.linkedin.com/feed/*"],
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "LinkedIn Feed Blocker"
+    "default_title": "__MSG_extName__"
   },
   "background": {
     "service_worker": "background.js"
@@ -30,7 +31,7 @@
         "default": "Ctrl+Shift+B",
         "mac": "Command+Shift+B"
       },
-      "description": "Abrir popup da extensão"
+      "description": "__MSG_cmdOpenPopup__"
     }
   }
 }

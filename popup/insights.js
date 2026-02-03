@@ -1,4 +1,5 @@
 import { escapeHtml } from "./utils.js";
+import { t } from "./i18n.js";
 
 const CATEGORY_LABELS = {
   article: "Artigo",
@@ -46,11 +47,13 @@ function renderSessionBlock(elements, sessionStats) {
   const blocked = sessionStats?.postsBlocked ?? 0;
   const pct = seen > 0 ? Math.round((blocked / seen) * 100) : 0;
   if (seen === 0 && blocked === 0) {
-    el.innerHTML = `<p class="insight-title">Sessão atual</p><p class="insight-empty">Nenhum dado nesta sessão. Role o feed no LinkedIn para ver métricas.</p>`;
+    el.innerHTML = `<p class="insight-title">${t(
+      "insightsSessionTitle"
+    )}</p><p class="insight-empty">${t("insightsSessionEmpty")}</p>`;
     return;
   }
   el.innerHTML = `
-    <p class="insight-title">Sessão atual</p>
+    <p class="insight-title">${t("insightsSessionTitle")}</p>
     <p class="insight-text">${escapeHtml(
       String(seen)
     )} posts no feed · ${escapeHtml(String(blocked))} ocultados (${escapeHtml(
@@ -116,7 +119,9 @@ function renderCategoryBlock(elements, feedInsights) {
     .filter(([, n]) => n > 0)
     .sort((a, b) => b[1] - a[1]);
   if (entries.length === 0) {
-    el.innerHTML = `<p class="insight-title">Categoria que mais recebi</p><p class="insight-empty">Role o feed para ver tipos de conteúdo.</p>`;
+    el.innerHTML = `<p class="insight-title">${t(
+      "insightsCategoryTitle"
+    )}</p><p class="insight-empty">${t("insightsCategoryEmpty")}</p>`;
     return;
   }
   const list = entries
@@ -126,7 +131,7 @@ function renderCategoryBlock(elements, feedInsights) {
     )
     .join("<br/>");
   el.innerHTML = `
-    <p class="insight-title">Categoria que mais recebi</p>
+    <p class="insight-title">${t("insightsCategoryTitle")}</p>
     <p class="insight-text">${list}</p>`;
 }
 
@@ -139,7 +144,9 @@ function renderAuthorsBlock(elements, feedInsights) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10);
   if (entries.length === 0) {
-    el.innerHTML = `<p class="insight-title">Autor que mais apareceu</p><p class="insight-empty">Role o feed para ver autores.</p>`;
+    el.innerHTML = `<p class="insight-title">${t(
+      "insightsAuthorsTitle"
+    )}</p><p class="insight-empty">${t("insightsAuthorsEmpty")}</p>`;
     return;
   }
   const list = entries
@@ -149,7 +156,7 @@ function renderAuthorsBlock(elements, feedInsights) {
     )
     .join("<br/>");
   el.innerHTML = `
-    <p class="insight-title">Autor que mais apareceu no feed</p>
+    <p class="insight-title">${t("insightsAuthorsTitle")}</p>
     <p class="insight-text">${list}</p>`;
 }
 
