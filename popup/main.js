@@ -24,6 +24,7 @@ import {
   restoreDefaults,
   clearAllData,
   bindToggles,
+  bindParamFields,
 } from "./params.js";
 import { renderInsights } from "./insights.js";
 import { renderDashboard } from "./dashboard.js";
@@ -31,13 +32,22 @@ import { renderDashboard } from "./dashboard.js";
 initElements();
 
 initTabs(elements);
-loadSettings(elements);
 loadBlockedList(elements);
 loadStats(elements);
 renderSuggestions(elements, escapeHtml);
-bindToggles(elements);
 renderInsights(elements);
 renderDashboard(elements);
+
+function initParamsAndBind() {
+  loadSettings(elements);
+  bindToggles(elements);
+  bindParamFields(elements);
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initParamsAndBind);
+} else {
+  setTimeout(initParamsAndBind, 0);
+}
 
 elements.blockedListFilterEl?.addEventListener("input", () =>
   loadBlockedList(elements)
@@ -90,42 +100,6 @@ elements.exportBlockedBtn?.addEventListener("click", () =>
   exportBlockedList(elements)
 );
 elements.saveParamsBtn?.addEventListener("click", () => saveParams(elements));
-
-let paramsDebounceTimer = null;
-function scheduleParamsSave() {
-  if (paramsDebounceTimer !== null) clearTimeout(paramsDebounceTimer);
-  paramsDebounceTimer = setTimeout(() => {
-    paramsDebounceTimer = null;
-    saveParams(elements);
-  }, 400);
-}
-
-elements.timeFilterStartEl?.addEventListener("change", () =>
-  saveParams(elements)
-);
-elements.timeFilterEndEl?.addEventListener("change", () =>
-  saveParams(elements)
-);
-elements.limitKeywordMaxEl?.addEventListener("change", () =>
-  saveParams(elements)
-);
-elements.rulePriorityEl?.addEventListener("change", () => saveParams(elements));
-elements.undoDurationEl?.addEventListener("change", () => saveParams(elements));
-elements.blockedGroupByEl?.addEventListener("change", () => {
-  saveParams(elements);
-  loadBlockedList(elements);
-});
-elements.badgeWhenPausedEl?.addEventListener("change", () =>
-  saveParams(elements)
-);
-elements.blockedAuthorsEl?.addEventListener("input", scheduleParamsSave);
-elements.blockedAuthorsEl?.addEventListener("blur", () => {
-  if (paramsDebounceTimer !== null) {
-    clearTimeout(paramsDebounceTimer);
-    paramsDebounceTimer = null;
-    saveParams(elements);
-  }
-});
 elements.exportKeywordsBtn?.addEventListener("click", () =>
   exportKeywords(elements)
 );

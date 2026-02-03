@@ -2,15 +2,15 @@ const panels = (el) => [
   el.panelDashboard,
   el.panelKeywords,
   el.panelBlocked,
-  el.panelParams,
   el.panelInsights,
+  el.panelParams,
 ];
 const tabButtons = (el) => [
   el.tabDashboard,
   el.tabKeywords,
   el.tabBlocked,
-  el.tabParams,
   el.tabInsights,
+  el.tabParams,
 ];
 
 export function showTab(elements, panel) {

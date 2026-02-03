@@ -7,7 +7,7 @@ import {
   downloadBlob,
   escapeHtml,
 } from "./utils.js";
-import { renderBlockedList } from "./blocked.js";
+import { renderBlockedList, loadBlockedList } from "./blocked.js";
 
 const TOGGLE_IDS = [
   "toggle-paused",
@@ -125,27 +125,44 @@ export function getSettingsFromUI(elements) {
 }
 
 export function saveParams(elements) {
-  const ui = getSettingsFromUI(elements);
-  const settingsPayload = {};
-  Object.keys(DEFAULTS).forEach((k) => {
-    if (k === "blockedAuthors") return;
-    if (Object.hasOwn(ui, k)) settingsPayload[k] = ui[k];
-  });
-  chrome.storage.sync.set({
-    settings: settingsPayload,
-    blockedAuthors: ui.blockedAuthors,
-  });
-  showFeedback(elements.feedbackParamsEl, "Salvo.");
-  if (ui.notifyOnSave && chrome.notifications) {
-    chrome.notifications
-      .create({
-        type: "basic",
-        title: "LinkedIn Feed Blocker",
-        message: "Parâmetros salvos.",
-      })
-      .catch(() => {});
+  try {
+    const ui = getSettingsFromUI(elements);
+    const settingsPayload = {};
+    Object.keys(DEFAULTS).forEach((k) => {
+      if (k === "blockedAuthors") return;
+      if (Object.hasOwn(ui, k)) settingsPayload[k] = ui[k];
+    });
+    chrome.storage.sync.set(
+      {
+        settings: settingsPayload,
+        blockedAuthors: ui.blockedAuthors,
+      },
+      () => {
+        const err = chrome.runtime.lastError;
+        if (err) {
+          showFeedback(
+            elements.feedbackParamsEl,
+            "Erro ao salvar: " + (err.message ?? "unknown")
+          );
+          return;
+        }
+        showFeedback(elements.feedbackParamsEl, "Salvo.");
+        if (ui.notifyOnSave && chrome.notifications) {
+          chrome.notifications
+            .create({
+              type: "basic",
+              title: "LinkedIn Feed Blocker",
+              message: "Parâmetros salvos.",
+            })
+            .catch(() => {});
+        }
+        reloadFeedIfActive();
+      }
+    );
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    showFeedback(elements.feedbackParamsEl, "Erro: " + msg);
   }
-  reloadFeedIfActive();
 }
 
 export function renderStats(elements, stats) {
@@ -308,6 +325,50 @@ export function bindToggles(elements) {
         setToggle(btn, !btn.classList.contains("on"));
         saveParams(elements);
       });
+    }
+  });
+}
+
+let paramsDebounceTimer = null;
+function scheduleParamsSave(elements) {
+  if (paramsDebounceTimer !== null) clearTimeout(paramsDebounceTimer);
+  paramsDebounceTimer = setTimeout(() => {
+    paramsDebounceTimer = null;
+    saveParams(elements);
+  }, 400);
+}
+
+export function bindParamFields(elements) {
+  elements.timeFilterStartEl?.addEventListener("change", () =>
+    saveParams(elements)
+  );
+  elements.timeFilterEndEl?.addEventListener("change", () =>
+    saveParams(elements)
+  );
+  elements.limitKeywordMaxEl?.addEventListener("change", () =>
+    saveParams(elements)
+  );
+  elements.rulePriorityEl?.addEventListener("change", () =>
+    saveParams(elements)
+  );
+  elements.undoDurationEl?.addEventListener("change", () =>
+    saveParams(elements)
+  );
+  elements.blockedGroupByEl?.addEventListener("change", () => {
+    saveParams(elements);
+    loadBlockedList(elements);
+  });
+  elements.badgeWhenPausedEl?.addEventListener("change", () =>
+    saveParams(elements)
+  );
+  elements.blockedAuthorsEl?.addEventListener("input", () =>
+    scheduleParamsSave(elements)
+  );
+  elements.blockedAuthorsEl?.addEventListener("blur", () => {
+    if (paramsDebounceTimer !== null) {
+      clearTimeout(paramsDebounceTimer);
+      paramsDebounceTimer = null;
+      saveParams(elements);
     }
   });
 }

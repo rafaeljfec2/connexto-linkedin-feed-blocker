@@ -39,21 +39,21 @@ customElements.define(
         type="button"
         class="tab"
         role="tab"
-        id="tab-params"
-        aria-selected="false"
-        aria-controls="panel-params"
-      >
-        Parâmetros
-      </button>
-      <button
-        type="button"
-        class="tab"
-        role="tab"
         id="tab-insights"
         aria-selected="false"
         aria-controls="panel-insights"
       >
         Insights
+      </button>
+      <button
+        type="button"
+        class="tab"
+        role="tab"
+        id="tab-params"
+        aria-selected="false"
+        aria-controls="panel-params"
+      >
+        Parâmetros
       </button>
     </nav>`;
     }
