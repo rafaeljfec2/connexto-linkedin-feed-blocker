@@ -361,13 +361,20 @@ function updateFeedCounter() {
       : `${count} post(s) ocultado(s) nesta sessão.`;
 }
 
+const COLLAPSED_MESSAGE =
+  "Conteúdo bloqueado pelo usuário através do LinkedIn Feed Blocker";
+
 function collapsePost(element, reason, snippet) {
   if (element.querySelector(".linkedin-feed-blocker-bar")) return;
   const bar = document.createElement("div");
   bar.className = "linkedin-feed-blocker-bar";
   bar.style.cssText =
     "padding:12px;background:#24282e;color:#9aa0a6;font-size:13px;border-radius:8px;margin-bottom:8px;";
-  bar.textContent = reason ? `Post ocultado por: ${reason}` : "Post ocultado";
+  const msgSpan = document.createElement("span");
+  msgSpan.textContent = reason
+    ? `${COLLAPSED_MESSAGE} (Ocultado por: ${reason})`
+    : COLLAPSED_MESSAGE;
+  bar.appendChild(msgSpan);
   if (settings.tooltipOnBlocked && snippet) {
     bar.title = snippet;
   }
@@ -375,6 +382,7 @@ function collapsePost(element, reason, snippet) {
   btn.textContent = "Expandir";
   btn.style.cssText =
     "margin-left:12px;padding:4px 10px;cursor:pointer;background:#0a66c2;color:#fff;border:none;border-radius:6px;font-size:12px;";
+  bar.appendChild(btn);
   const wrapper = document.createElement("div");
   wrapper.style.display = "none";
   while (element.firstChild) {
@@ -384,7 +392,6 @@ function collapsePost(element, reason, snippet) {
     bar.remove();
     wrapper.style.display = "";
   });
-  bar.appendChild(btn);
   element.appendChild(bar);
   element.appendChild(wrapper);
 }
