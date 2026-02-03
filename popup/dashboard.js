@@ -19,7 +19,7 @@ function getLast7DayKeys() {
       ).padStart(2, "0")}`
     );
   }
-  return keys.reverse();
+  return keys;
 }
 
 function formatShortDay(dateKey) {
@@ -172,9 +172,9 @@ function renderAuthorsChart(elements, feedInsights) {
     .map(
       ([name, n]) =>
         `<div class="dashboard-bar-row">
-          <span class="dashboard-bar-label">${escapeHtml(name.slice(0, 18))}${
-          name.length > 18 ? "…" : ""
-        }</span>
+          <span class="dashboard-bar-label" title="${escapeHtml(
+            name
+          )}">${escapeHtml(name)}</span>
           <div class="dashboard-bar-track"><div class="dashboard-bar dashboard-bar-author" style="width:${
             (n / max) * 100
           }%"></div></div>
