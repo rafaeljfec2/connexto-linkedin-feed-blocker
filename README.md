@@ -6,24 +6,58 @@ Extensão para Chrome (Manifest V3) que oculta posts do feed do LinkedIn quando 
 
 ```
 connexto-linkedin-feed-blocker/
-├── manifest.json       # Manifest da extensão (MV3)
-├── background.js       # Service worker: badge com contagem de bloqueados
+├── manifest.json           # Manifest da extensão (MV3)
+├── background.js           # Service worker: badge com contagem de bloqueados
+├── _locales/               # Internacionalização (pt-BR, es, en)
+│   ├── pt_BR/
+│   │   └── messages.json
+│   ├── es/
+│   │   └── messages.json
+│   └── en/
+│       └── messages.json
 ├── popup/
-│   ├── popup.html      # Interface do popup (Palavras-chave, Bloqueados, Parâmetros)
-│   ├── popup.css       # Estilos do popup
-│   └── popup.js        # Lógica: palavras, parâmetros, lista bloqueada, export/import
+│   ├── popup.html          # Shell do popup (custom elements)
+│   ├── popup.css           # Estilos do popup
+│   ├── main.js             # Ponto de entrada e orquestração
+│   ├── i18n.js             # Helper de tradução (chrome.i18n)
+│   ├── dom.js              # Referências aos elementos do DOM
+│   ├── tabs.js             # Navegação entre abas
+│   ├── constants.js        # Constantes do popup
+│   ├── utils.js            # Utilitários (feedback, parse, etc.)
+│   ├── keywords.js         # Palavras-chave: salvar, exportar, importar
+│   ├── blocked.js          # Lista de posts bloqueados
+│   ├── params.js           # Parâmetros: carregar, salvar, bind, backup
+│   ├── dashboard.js        # Renderização do dashboard (gráficos em CSS)
+│   ├── insights.js         # Renderização da aba Insights
+│   └── components/         # Web Components (painéis e navegação)
+│       ├── header.js
+│       ├── footer.js
+│       ├── tabs.js         # Tab nav (Dashboard, Palavras-chave, etc.)
+│       ├── dashboard-panel.js
+│       ├── keywords-panel.js
+│       ├── blocked-panel.js
+│       ├── params-panel.js
+│       └── insights-panel.js
 ├── content/
-│   ├── constants.js    # Constantes (seletor, debounce, defaults)
-│   └── content.js      # Observador do feed e lógica de bloqueio (regex, lista branca, autor, colapsar, etc.)
+│   ├── constants.js        # Constantes (seletor, debounce, defaults)
+│   └── content.js          # Observador do feed e lógica de bloqueio
+├── assets/                 # Ícones da extensão
 ├── scripts/
-│   ├── load-in-chrome.sh   # Abre a página de extensões do Chrome e exibe o caminho da pasta (Linux/macOS)
+│   ├── load-in-chrome.sh   # Abre extensões e exibe caminho (Linux/macOS)
 │   └── load-in-chrome.bat  # O mesmo para Windows
-├── docs/
-│   ├── extensoes-modo-desenvolvedor.png       # Passo 1: Modo do desenvolvedor
-│   ├── extensoes-carregar-sem-compactacao.png # Passo 2: Botão Carregar sem compactação
-│   └── extensao-instalada.png                 # Passo 4: Extensão instalada na lista
+├── docs/                   # Imagens do passo a passo de instalação
 └── README.md
 ```
+
+## Idiomas (internacionalização)
+
+A extensão usa a API de mensagens do Chrome (`chrome.i18n`) e suporta:
+
+- **pt_BR** (padrão) – Português do Brasil
+- **es** – Español
+- **en** – English (US)
+
+O idioma exibido segue o idioma da interface do Chrome. Os arquivos de tradução ficam em `_locales/<locale>/messages.json`.
 
 ## Instalador / distribuição
 
@@ -88,19 +122,17 @@ Depois dos passos do seu sistema, faça no Chrome:
 
 1. Acesse o [Feed do LinkedIn](https://www.linkedin.com/feed/).
 2. Clique no ícone da extensão na barra de ferramentas do Chrome para abrir o popup (ou use o atalho **Ctrl+Shift+B** / **Cmd+Shift+B** no Mac).
-3. **Palavras-chave:** digite uma palavra ou frase por linha e clique em **Salvar**. O feed recarrega e os posts que contêm alguma palavra são ocultados.
-4. **Posts bloqueados:** aba que lista os últimos posts ocultados e a palavra que casou; botão para exportar (JSON) e limpar a lista.
-5. **Parâmetros:** aba de configurações:
-   - **Pausar bloqueio:** desativa o bloqueio sem apagar as palavras.
-   - **Modo lista branca:** só mostra posts que contêm alguma palavra-chave (oculta o resto).
-   - **Usar regex:** trata as palavras como expressões regulares.
-   - **Colapsar em vez de esconder:** mostra uma barra “Post ocultado por X” com botão **Expandir**.
-   - **Só notificação:** marca o post com borda laranja sem esconder.
-   - **Bloquear por autor:** lista de nomes/textos (um por linha); posts que contêm algum são ocultados.
-   - **Importar/exportar palavras:** exportar em .txt ou colar texto e clicar em **Adicionar às palavras**.
-   - **Sugestões:** palavras pré-definidas; clique para adicionar à lista.
-   - **Estatísticas:** contagem de bloqueios por palavra.
-6. O ícone da extensão exibe um badge com a quantidade de posts bloqueados na lista atual.
+3. **Dashboard (primeira aba):** resumo da sessão (posts vistos vs. ocultados), bloqueios nos últimos 7 dias, top palavras bloqueadas, categoria que mais recebeu e autor que mais apareceu no feed.
+4. **Palavras-chave:** digite uma palavra ou frase por linha e clique em **Salvar**. O feed recarrega e os posts que contêm alguma palavra são ocultados.
+5. **Bloqueados:** lista os últimos posts ocultados e a palavra que casou; filtro, agrupamento, exportar (JSON) e limpar lista.
+6. **Insights:** métricas do feed (sessão, bloqueios, categoria que mais recebeu, autor que mais apareceu), atualizadas conforme você rola o feed.
+7. **Parâmetros (última aba):** configurações; alterações são salvas automaticamente (não é preciso clicar em Salvar). Inclui:
+   - **Bloqueio:** pausar bloqueio, modo lista branca, usar regex, colapsar em vez de esconder (mostra a mensagem _Conteúdo bloqueado pelo usuário através do LinkedIn Feed Blocker (Ocultado por: X)_ e botão **Expandir**), só notificação (borda laranja sem esconder), bloquear por autor, prioridade (palavra vs. autor), horário e limites.
+   - **Palavras-chave:** importar/exportar e sugestões.
+   - **Interface no feed:** contador de ocultados, botão Desfazer, tooltip em post colapsado, agrupar lista bloqueados.
+   - **Popup e extensão:** atalho Ctrl+Enter, badge quando pausado, notificação ao salvar.
+   - **Dados e privacidade:** não guardar trecho na lista, backup/restaurar e limpar dados.
+8. O ícone da extensão exibe um badge com a quantidade de posts bloqueados na lista atual.
 
 ## Como atualizar a extensão
 
@@ -116,3 +148,7 @@ O Chrome recarrega a extensão e as mudanças passam a valer. Se o feed do Linke
 
 - Google Chrome compatível com Manifest V3.
 - Sem backend, frameworks ou bibliotecas externas; usa apenas APIs do Chrome e o DOM.
+
+## Desenvolvido por
+
+[rafaeljfec2](https://github.com/rafaeljfec2)
