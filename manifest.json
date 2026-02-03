@@ -9,7 +9,7 @@
     "48": "assets/Gemini_Generated_Image_q6f89lq6f89lq6f8.png",
     "128": "assets/Gemini_Generated_Image_q6f89lq6f89lq6f8.png"
   },
-  "permissions": ["storage", "tabs", "notifications"],
+  "permissions": ["storage"],
   "host_permissions": ["https://www.linkedin.com/feed/*"],
   "action": {
     "default_popup": "popup/popup.html",

@@ -11,17 +11,6 @@ export function saveKeywords(elements) {
   const lines = parseLines(elements.keywordsEl?.value ?? "");
   chrome.storage.sync.set({ keywords: lines });
   showFeedback(elements.feedbackEl, t("feedbackSaved"));
-  chrome.storage.sync.get(["settings"], (r) => {
-    if (r.settings?.notifyOnSave && chrome.notifications) {
-      chrome.notifications
-        .create({
-          type: "basic",
-          title: "LinkedIn Feed Blocker",
-          message: "Palavras salvas.",
-        })
-        .catch(() => {});
-    }
-  });
   reloadFeedIfActive();
 }
 

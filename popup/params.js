@@ -148,15 +148,6 @@ export function saveParams(elements) {
           return;
         }
         showFeedback(elements.feedbackParamsEl, t("feedbackSaved"));
-        if (ui.notifyOnSave && chrome.notifications) {
-          chrome.notifications
-            .create({
-              type: "basic",
-              title: chrome.i18n.getMessage("extName"),
-              message: t("paramsSaved"),
-            })
-            .catch(() => {});
-        }
         reloadFeedIfActive();
       }
     );
