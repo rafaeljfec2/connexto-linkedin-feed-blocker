@@ -11,6 +11,23 @@ let insightPending = {
 };
 let insightFlushTimer = null;
 
+function isExtensionContextValid() {
+  try {
+    return Boolean(chrome?.runtime?.id);
+  } catch {
+    return false;
+  }
+}
+
+function isContextInvalidatedError(e) {
+  try {
+    const msg = String(e?.message ?? "");
+    return msg.includes("invalidated");
+  } catch {
+    return true;
+  }
+}
+
 function normalizeList(raw) {
   if (Array.isArray(raw)) {
     return raw.map((s) => String(s).trim()).filter(Boolean);
@@ -121,74 +138,113 @@ function getAuthorFromPost(element) {
 }
 
 function getCategoryFromPost(element) {
-  if (!element?.querySelector) return "text";
-  if (element.querySelector("video")) return "video";
-  if (
-    element.querySelector('[data-urn*="job"], [data-id*="job"], .job-card') ||
-    element.querySelector('a[href*="/jobs/"]')
-  )
-    return "job";
-  const hasArticleCard =
-    element.querySelector(".feed-shared-article") ||
-    element.querySelector('[data-urn*="share"] img') ||
-    (element.querySelector("img") && element.querySelector('a[href^="http"]'));
-  if (hasArticleCard) return "article";
-  if (element.querySelector("img")) return "image";
-  return "text";
+  try {
+    if (!element?.querySelector) return "text";
+    if (element.querySelector("video")) return "video";
+    if (
+      element.querySelector('[data-urn*="job"], [data-id*="job"], .job-card') ||
+      element.querySelector('a[href*="/jobs/"]')
+    )
+      return "job";
+    const hasArticleCard =
+      element.querySelector(".feed-shared-article") ||
+      element.querySelector('[data-urn*="share"] img') ||
+      (element.querySelector("img") &&
+        element.querySelector('a[href^="http"]'));
+    if (hasArticleCard) return "article";
+    if (element.querySelector("img")) return "image";
+    return "text";
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return "text";
+    throw e;
+  }
 }
 
 function flushInsightsToStorage() {
   insightFlushTimer = null;
-  chrome.storage.local.get(["sessionStats", "feedInsights"], (result) => {
-    const session = result.sessionStats ?? {};
-    const feed = result.feedInsights ?? {};
-    const feedAuthors = feed.authors ?? {};
-    const feedCategories = feed.categories ?? {};
-    const nextSession = {
-      postsSeen: (session.postsSeen ?? 0) + insightPending.postsSeen,
-      postsBlocked: (session.postsBlocked ?? 0) + insightPending.postsBlocked,
-      lastUpdated: Date.now(),
-    };
-    const nextAuthors = { ...feedAuthors };
-    for (const [name, delta] of Object.entries(insightPending.authors)) {
-      nextAuthors[name] = (nextAuthors[name] ?? 0) + delta;
-    }
-    const entries = Object.entries(nextAuthors).sort((a, b) => b[1] - a[1]);
-    const trimmed = Object.fromEntries(
-      entries.slice(0, FEED_INSIGHTS_AUTHORS_MAX)
-    );
-    const nextCategories = { ...feedCategories };
-    for (const [cat, delta] of Object.entries(insightPending.categories)) {
-      nextCategories[cat] = (nextCategories[cat] ?? 0) + delta;
-    }
-    chrome.storage.local.set({
-      sessionStats: nextSession,
-      feedInsights: {
-        authors: trimmed,
-        categories: nextCategories,
-        lastUpdated: Date.now(),
-      },
+  try {
+    if (!isExtensionContextValid()) return;
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
+  }
+  try {
+    chrome.storage.local.get(["sessionStats", "feedInsights"], (result) => {
+      try {
+        if (!isExtensionContextValid()) return;
+        const session = result.sessionStats ?? {};
+        const feed = result.feedInsights ?? {};
+        const feedAuthors = feed.authors ?? {};
+        const feedCategories = feed.categories ?? {};
+        const nextSession = {
+          postsSeen: (session.postsSeen ?? 0) + insightPending.postsSeen,
+          postsBlocked:
+            (session.postsBlocked ?? 0) + insightPending.postsBlocked,
+          lastUpdated: Date.now(),
+        };
+        const nextAuthors = { ...feedAuthors };
+        for (const [name, delta] of Object.entries(insightPending.authors)) {
+          nextAuthors[name] = (nextAuthors[name] ?? 0) + delta;
+        }
+        const entries = Object.entries(nextAuthors).sort((a, b) => b[1] - a[1]);
+        const trimmed = Object.fromEntries(
+          entries.slice(0, FEED_INSIGHTS_AUTHORS_MAX)
+        );
+        const nextCategories = { ...feedCategories };
+        for (const [cat, delta] of Object.entries(insightPending.categories)) {
+          nextCategories[cat] = (nextCategories[cat] ?? 0) + delta;
+        }
+        chrome.storage.local.set({
+          sessionStats: nextSession,
+          feedInsights: {
+            authors: trimmed,
+            categories: nextCategories,
+            lastUpdated: Date.now(),
+          },
+        });
+        insightPending.authors = {};
+        insightPending.categories = {};
+        insightPending.postsSeen = 0;
+        insightPending.postsBlocked = 0;
+      } catch (e) {
+        if (isContextInvalidatedError(e)) return;
+        throw e;
+      }
     });
-    insightPending.authors = {};
-    insightPending.categories = {};
-    insightPending.postsSeen = 0;
-    insightPending.postsBlocked = 0;
-  });
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
+  }
 }
 
 function scheduleInsightsFlush() {
-  if (insightFlushTimer !== null) return;
-  insightFlushTimer = setTimeout(flushInsightsToStorage, INSIGHTS_THROTTLE_MS);
+  try {
+    if (!isExtensionContextValid()) return;
+    if (insightFlushTimer !== null) return;
+    insightFlushTimer = setTimeout(
+      flushInsightsToStorage,
+      INSIGHTS_THROTTLE_MS
+    );
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
+  }
 }
 
 function recordPostForInsights(element) {
-  const author = getAuthorFromPost(element);
-  const category = getCategoryFromPost(element);
-  insightPending.postsSeen += 1;
-  insightPending.authors[author] = (insightPending.authors[author] ?? 0) + 1;
-  insightPending.categories[category] =
-    (insightPending.categories[category] ?? 0) + 1;
-  scheduleInsightsFlush();
+  try {
+    if (!isExtensionContextValid()) return;
+    const author = getAuthorFromPost(element);
+    const category = getCategoryFromPost(element);
+    insightPending.postsSeen += 1;
+    insightPending.authors[author] = (insightPending.authors[author] ?? 0) + 1;
+    insightPending.categories[category] =
+      (insightPending.categories[category] ?? 0) + 1;
+    scheduleInsightsFlush();
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
+  }
 }
 
 function recordSessionBlocked() {
@@ -197,38 +253,55 @@ function recordSessionBlocked() {
 }
 
 function appendBlockedPost(snippet, keyword) {
+  try {
+    if (!isExtensionContextValid()) return;
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
+  }
   const storeInList = !settings.dontStoreSnippet;
-  chrome.storage.local.get(
-    ["blockedPosts", "statsByKeyword", "countByKeywordDay"],
-    (result) => {
-      const list = Array.isArray(result.blockedPosts)
-        ? result.blockedPosts
-        : [];
-      if (storeInList) {
-        list.unshift({ snippet, keyword, at: Date.now() });
+  try {
+    chrome.storage.local.get(
+      ["blockedPosts", "statsByKeyword", "countByKeywordDay"],
+      (result) => {
+        try {
+          if (!isExtensionContextValid()) return;
+          const list = Array.isArray(result.blockedPosts)
+            ? result.blockedPosts
+            : [];
+          if (storeInList) {
+            list.unshift({ snippet, keyword, at: Date.now() });
+          }
+          const prev = result.statsByKeyword ?? null;
+          const stats =
+            prev && typeof prev === "object" && !Array.isArray(prev)
+              ? { ...prev }
+              : {};
+          stats[keyword] = (stats[keyword] ?? 0) + 1;
+          const dayKey = getTodayKey();
+          const countKey = `${keyword}:${dayKey}`;
+          const countPrev = result.countByKeywordDay ?? {};
+          const countNext = {
+            ...countPrev,
+            [countKey]: (countPrev[countKey] ?? 0) + 1,
+          };
+          chrome.storage.local.set({
+            blockedPosts: storeInList
+              ? list.slice(0, BLOCKED_LIST_MAX)
+              : result.blockedPosts ?? [],
+            statsByKeyword: stats,
+            countByKeywordDay: countNext,
+          });
+        } catch (e) {
+          if (isContextInvalidatedError(e)) return;
+          throw e;
+        }
       }
-      const prev = result.statsByKeyword ?? null;
-      const stats =
-        prev && typeof prev === "object" && !Array.isArray(prev)
-          ? { ...prev }
-          : {};
-      stats[keyword] = (stats[keyword] ?? 0) + 1;
-      const dayKey = getTodayKey();
-      const countKey = `${keyword}:${dayKey}`;
-      const countPrev = result.countByKeywordDay ?? {};
-      const countNext = {
-        ...countPrev,
-        [countKey]: (countPrev[countKey] ?? 0) + 1,
-      };
-      chrome.storage.local.set({
-        blockedPosts: storeInList
-          ? list.slice(0, BLOCKED_LIST_MAX)
-          : result.blockedPosts ?? [],
-        statsByKeyword: stats,
-        countByKeywordDay: countNext,
-      });
-    }
-  );
+    );
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
+  }
 }
 
 function checkLimitThenBlock(keywordLabel, callback) {
@@ -238,12 +311,30 @@ function checkLimitThenBlock(keywordLabel, callback) {
   }
   const dayKey = getTodayKey();
   const countKey = `${keywordLabel}:${dayKey}`;
-  chrome.storage.local.get(["countByKeywordDay"], (result) => {
-    const counts = result.countByKeywordDay ?? {};
-    const count = counts[countKey] ?? 0;
-    const max = Math.max(1, settings.limitPerKeywordMax ?? 10);
-    callback(count < max);
-  });
+  try {
+    if (!isExtensionContextValid()) {
+      callback(true);
+      return;
+    }
+    chrome.storage.local.get(["countByKeywordDay"], (result) => {
+      try {
+        if (!isExtensionContextValid()) return;
+        const counts = result.countByKeywordDay ?? {};
+        const count = counts[countKey] ?? 0;
+        const max = Math.max(1, settings.limitPerKeywordMax ?? 10);
+        callback(count < max);
+      } catch (e) {
+        if (isContextInvalidatedError(e)) return;
+        throw e;
+      }
+    });
+  } catch (e) {
+    if (isContextInvalidatedError(e)) {
+      callback(true);
+      return;
+    }
+    throw e;
+  }
 }
 
 function updateFeedCounter() {
@@ -420,32 +511,50 @@ function startObserver() {
 }
 
 function loadConfig() {
-  chrome.storage.sync.get(
-    ["keywords", "settings", "blockedAuthors"],
-    (result) => {
-      const nextSettings = result.settings ?? null;
-      settings =
-        nextSettings && typeof nextSettings === "object"
-          ? { ...settings, ...nextSettings }
-          : settings;
-      keywords = normalizeKeywords(result.keywords ?? []);
-      blockedAuthors = normalizeList(result.blockedAuthors ?? []);
-      startObserver();
-    }
-  );
+  try {
+    if (!isExtensionContextValid()) return;
+    chrome.storage.sync.get(
+      ["keywords", "settings", "blockedAuthors"],
+      (result) => {
+        try {
+          if (!isExtensionContextValid()) return;
+          const nextSettings = result.settings ?? null;
+          settings =
+            nextSettings && typeof nextSettings === "object"
+              ? { ...settings, ...nextSettings }
+              : settings;
+          keywords = normalizeKeywords(result.keywords ?? []);
+          blockedAuthors = normalizeList(result.blockedAuthors ?? []);
+          startObserver();
+        } catch (e) {
+          if (isContextInvalidatedError(e)) return;
+          throw e;
+        }
+      }
+    );
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
+  }
 }
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName !== "sync") return;
-  const newSettings = changes.settings?.newValue ?? null;
-  if (newSettings && typeof newSettings === "object") {
-    settings = { ...settings, ...newSettings };
-  }
-  if (changes.keywords) {
-    keywords = normalizeKeywords(changes.keywords.newValue ?? []);
-  }
-  if (changes.blockedAuthors) {
-    blockedAuthors = normalizeList(changes.blockedAuthors.newValue ?? []);
+  try {
+    if (!isExtensionContextValid()) return;
+    if (areaName !== "sync") return;
+    const newSettings = changes.settings?.newValue ?? null;
+    if (newSettings && typeof newSettings === "object") {
+      settings = { ...settings, ...newSettings };
+    }
+    if (changes.keywords) {
+      keywords = normalizeKeywords(changes.keywords.newValue ?? []);
+    }
+    if (changes.blockedAuthors) {
+      blockedAuthors = normalizeList(changes.blockedAuthors.newValue ?? []);
+    }
+  } catch (e) {
+    if (isContextInvalidatedError(e)) return;
+    throw e;
   }
 });
 
