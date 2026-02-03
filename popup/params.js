@@ -304,9 +304,10 @@ export function bindToggles(elements) {
   TOGGLE_IDS.forEach((id) => {
     const btn = document.getElementById(id);
     if (btn) {
-      btn.addEventListener("click", () =>
-        setToggle(btn, !btn.classList.contains("on"))
-      );
+      btn.addEventListener("click", () => {
+        setToggle(btn, !btn.classList.contains("on"));
+        saveParams(elements);
+      });
     }
   });
 }

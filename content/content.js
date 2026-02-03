@@ -415,8 +415,9 @@ function applyBlock(element, reason, keywordLabel, snippet) {
   appendBlockedPost(settings.dontStoreSnippet ? "" : snippet, keywordLabel);
 
   if (settings.notificationOnly) {
-    element.style.borderLeft = "4px solid #f59e0b";
-    element.style.opacity = "0.85";
+    element.style.borderLeft = "6px solid #f59e0b";
+    element.style.boxShadow = "2px 0 12px rgba(245, 158, 11, 0.45)";
+    element.style.opacity = "0.92";
     updateFeedCounter();
     return;
   }

@@ -42,9 +42,6 @@ renderDashboard(elements);
 elements.blockedListFilterEl?.addEventListener("input", () =>
   loadBlockedList(elements)
 );
-elements.blockedGroupByEl?.addEventListener("change", () =>
-  loadBlockedList(elements)
-);
 elements.tabDashboard?.addEventListener("click", () =>
   renderDashboard(elements)
 );
@@ -93,6 +90,42 @@ elements.exportBlockedBtn?.addEventListener("click", () =>
   exportBlockedList(elements)
 );
 elements.saveParamsBtn?.addEventListener("click", () => saveParams(elements));
+
+let paramsDebounceTimer = null;
+function scheduleParamsSave() {
+  if (paramsDebounceTimer !== null) clearTimeout(paramsDebounceTimer);
+  paramsDebounceTimer = setTimeout(() => {
+    paramsDebounceTimer = null;
+    saveParams(elements);
+  }, 400);
+}
+
+elements.timeFilterStartEl?.addEventListener("change", () =>
+  saveParams(elements)
+);
+elements.timeFilterEndEl?.addEventListener("change", () =>
+  saveParams(elements)
+);
+elements.limitKeywordMaxEl?.addEventListener("change", () =>
+  saveParams(elements)
+);
+elements.rulePriorityEl?.addEventListener("change", () => saveParams(elements));
+elements.undoDurationEl?.addEventListener("change", () => saveParams(elements));
+elements.blockedGroupByEl?.addEventListener("change", () => {
+  saveParams(elements);
+  loadBlockedList(elements);
+});
+elements.badgeWhenPausedEl?.addEventListener("change", () =>
+  saveParams(elements)
+);
+elements.blockedAuthorsEl?.addEventListener("input", scheduleParamsSave);
+elements.blockedAuthorsEl?.addEventListener("blur", () => {
+  if (paramsDebounceTimer !== null) {
+    clearTimeout(paramsDebounceTimer);
+    paramsDebounceTimer = null;
+    saveParams(elements);
+  }
+});
 elements.exportKeywordsBtn?.addEventListener("click", () =>
   exportKeywords(elements)
 );
