@@ -1,7 +1,9 @@
 const BLOCKED_ATTR = "data-linkedin-feed-blocker";
 const INSIGHT_ATTR = "data-linkedin-feed-blocker-insight";
-const POST_SELECTOR = 'main div[data-urn^="urn:li:activity"]';
+const POST_SELECTOR =
+  'main div[data-urn^="urn:li:activity"], main div[data-urn^="urn:li:share"]';
 const DEBOUNCE_MS = 100;
+const REPROCESS_DELAY_MS = 500;
 const BLOCKED_LIST_MAX = 50;
 const INSIGHTS_THROTTLE_MS = 1500;
 const FEED_INSIGHTS_AUTHORS_MAX = 50;

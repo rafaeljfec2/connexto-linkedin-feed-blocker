@@ -2,6 +2,7 @@ let keywords = [];
 let blockedAuthors = [];
 let settings = { ...DEFAULT_SETTINGS };
 let processDebounceTimer = null;
+let processRerunTimer = null;
 let feedCounterEl = null;
 let insightPending = {
   authors: {},
@@ -454,6 +455,13 @@ function applyBlock(element, reason, keywordLabel, snippet) {
 
 function processPost(element) {
   if (element.getAttribute(BLOCKED_ATTR) !== null) return;
+  const ancestorPost = element.parentElement?.closest?.(POST_SELECTOR);
+  if (
+    ancestorPost &&
+    ancestorPost !== element &&
+    ancestorPost.getAttribute(BLOCKED_ATTR) !== null
+  )
+    return;
 
   if (element.getAttribute(INSIGHT_ATTR) === null) {
     recordPostForInsights(element);
@@ -510,8 +518,14 @@ function scheduleProcess(mutations) {
   if (added.length === 0) return;
   if (processDebounceTimer !== null) clearTimeout(processDebounceTimer);
   processDebounceTimer = setTimeout(() => {
+    processDebounceTimer = null;
     processNodes(added);
     runProcess();
+    if (processRerunTimer !== null) clearTimeout(processRerunTimer);
+    processRerunTimer = setTimeout(() => {
+      processRerunTimer = null;
+      runProcess();
+    }, REPROCESS_DELAY_MS);
   }, DEBOUNCE_MS);
 }
 
@@ -522,6 +536,11 @@ function startObserver() {
     return;
   }
   runProcess();
+  if (processRerunTimer !== null) clearTimeout(processRerunTimer);
+  processRerunTimer = setTimeout(() => {
+    processRerunTimer = null;
+    runProcess();
+  }, REPROCESS_DELAY_MS);
   const observer = new MutationObserver(scheduleProcess);
   observer.observe(feed, { childList: true, subtree: true });
 }

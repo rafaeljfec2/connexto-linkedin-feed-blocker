@@ -78,6 +78,36 @@ Filtre o feed do LinkedIn por palavras e autores. Oculte ou recolha posts que co
 
 ---
 
+## Justificativas de permissão (formulário da Chrome Web Store)
+
+Use os textos abaixo nos campos obrigatórios do formulário "Justificativa da permissão". Marque **"Não, não estou usando código remoto"** — todo o código da extensão está no pacote; não há eval(), new Function(), scripts externos nem Wasm remoto.
+
+### Justificativa de storage
+
+A extensão usa a API chrome.storage para persistir apenas no dispositivo do usuário: (1) chrome.storage.sync — lista de palavras-chave, autores bloqueados e todas as configurações do popup, para o usuário não perder as preferências ao fechar o navegador; (2) chrome.storage.local — lista de posts bloqueados na sessão e estatísticas agregadas (contagens por palavra, etc.) usadas apenas na interface da extensão. Nenhum dado é enviado a servidores externos.
+
+### Justificativa de Permissão do host
+
+A permissão https://www.linkedin.com/feed/* é necessária para injetar o content script na página do feed do LinkedIn. O script roda somente nessa URL, lê o DOM do feed, aplica as regras de filtro (palavras-chave e autores) localmente e oculta ou recolhe os posts correspondentes. Sem essa permissão a extensão não consegue aplicar os filtros no feed.
+
+### Código remoto
+
+Selecione: **Não, não estou usando código remoto.** Todo o JavaScript está incluído no pacote da extensão; não há referências a arquivos externos em tags script, módulos externos ou uso de eval().
+
+### Uso de dados — "Quais dados você pretende coletar dos usuários agora ou no futuro?"
+
+A extensão não coleta dados para fora do dispositivo. Deixe **todas as caixas desmarcadas**: Informações de identificação pessoal, Informações sobre saúde, Informações financeiras e de pagamento, Informações de autenticação, Comunicações pessoais, Local, Histórico da Web, Atividade do usuário, Conteúdo do site. Nenhuma dessas categorias se aplica: o processamento é local e os dados ficam apenas no chrome.storage no dispositivo do usuário.
+
+### Declarações de privacidade — "Declaro que as divulgações a seguir são verdadeiras:"
+
+Marque **as três** declarações (todas são verdadeiras para esta extensão):
+
+1. **Não vendo nem transfiro dados do usuário a terceiros fora dos casos de uso aprovados** — A extensão não vende nem transfere dados; nada é enviado a terceiros.
+2. **Não uso nem transfiro dados do usuário para fins não relacionados ao único objetivo do meu item** — O único uso é armazenar preferências e listas localmente para filtrar o feed; não há outros fins.
+3. **Não uso nem transfiro dados do usuário para determinar credibilidade ou para fins de empréstimo** — Não se aplica; a extensão não trata dados para esses fins.
+
+---
+
 ## Chrome Web Store submission checklist
 
 Use this list before and during submission.
