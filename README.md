@@ -118,6 +118,14 @@ Depois dos passos do seu sistema, faça no Chrome:
 5. O script exibe o caminho completo da pasta da extensão e tenta abrir o Chrome em `chrome://extensions`. Se o Chrome não abrir, acesse `chrome://extensions` manualmente no Chrome.
 6. Siga os passos do Chrome acima (Modo do desenvolvedor → Carregar sem compactação → selecione o caminho da pasta exibido pelo script).
 
+## Publicação na Chrome Web Store
+
+1. **Empacotar:** na raiz do projeto, crie um zip com todos os arquivos da extensão (exceto `.git` e o próprio `.zip`). O zip deve conter `manifest.json`, `background.js`, pastas `content/`, `popup/`, `_locales/`, `assets/` e demais arquivos listados na estrutura do projeto.
+2. **Dashboard:** acesse o [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole), crie ou selecione o item e faça upload do zip.
+3. **Textos e justificativas:** use o arquivo **STORE_DESCRIPTION.md** para copiar descrição curta, longa, justificativas de permissão (storage e host), declaração de não uso de código remoto e declarações de privacidade.
+4. **Política de privacidade:** informe na loja a URL pública da política ou o conteúdo do **PRIVACY.md** (nenhum dado coletado, processamento local, nada compartilhado).
+5. **Revisão:** preencha todos os campos obrigatórios, envie para revisão e aguarde o e-mail de aprovação (revisão com host permission pode levar mais tempo).
+
 ## Como utilizar
 
 1. Acesse o [Feed do LinkedIn](https://www.linkedin.com/feed/).

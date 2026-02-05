@@ -23,7 +23,14 @@ export function escapeHtml(s) {
   return div.innerHTML;
 }
 
-export function reloadFeedIfActive() {}
+export function reloadFeedIfActive() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs[0];
+    if (tab?.url?.includes("linkedin.com/feed")) {
+      chrome.tabs.reload(tab.id);
+    }
+  });
+}
 
 export function setToggle(btn, value) {
   if (!btn) return;

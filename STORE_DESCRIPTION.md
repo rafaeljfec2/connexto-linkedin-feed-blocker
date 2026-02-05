@@ -86,6 +86,10 @@ Use os textos abaixo nos campos obrigatórios do formulário "Justificativa da p
 
 A extensão usa a API chrome.storage para persistir apenas no dispositivo do usuário: (1) chrome.storage.sync — lista de palavras-chave, autores bloqueados e todas as configurações do popup, para o usuário não perder as preferências ao fechar o navegador; (2) chrome.storage.local — lista de posts bloqueados na sessão e estatísticas agregadas (contagens por palavra, etc.) usadas apenas na interface da extensão. Nenhum dado é enviado a servidores externos.
 
+### Justificativa de tabs
+
+A permissão "tabs" é usada apenas para recarregar a aba do feed do LinkedIn quando o usuário salva palavras-chave ou parâmetros no popup. Assim o content script é executado de novo com as novas regras e os posts passam a ser ocultados imediatamente, sem o usuário precisar recarregar a página manualmente (F5). A extensão não lê URL, título nem conteúdo de outras abas; só verifica se a aba ativa é a do feed (linkedin.com/feed) e, nesse caso, chama chrome.tabs.reload nessa aba.
+
 ### Justificativa de Permissão do host
 
 A permissão https://www.linkedin.com/feed/* é necessária para injetar o content script na página do feed do LinkedIn. O script roda somente nessa URL, lê o DOM do feed, aplica as regras de filtro (palavras-chave e autores) localmente e oculta ou recolhe os posts correspondentes. Sem essa permissão a extensão não consegue aplicar os filtros no feed.
@@ -115,9 +119,9 @@ Use this list before and during submission.
 **Manifest & permissions**
 
 - [ ] Manifest V3 (`manifest_version: 3`)
-- [ ] `permissions`: only `["storage"]`
+- [ ] `permissions`: `["storage", "tabs"]` (tabs só para recarregar a aba do feed ao salvar)
 - [ ] `host_permissions`: only `["https://www.linkedin.com/feed/*"]`
-- [ ] No `tabs`, `notifications`, `<all_urls>`, or unnecessary permissions
+- [ ] No `notifications`, `<all_urls>`, or unnecessary permissions
 
 **Code**
 

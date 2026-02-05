@@ -9,7 +9,7 @@
     "48": "assets/icon48.png",
     "128": "assets/icon128.png"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "tabs"],
   "host_permissions": ["https://www.linkedin.com/feed/*"],
   "action": {
     "default_popup": "popup/popup.html",

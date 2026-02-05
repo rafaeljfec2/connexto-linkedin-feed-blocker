@@ -273,9 +273,11 @@ function appendBlockedPost(snippet, keyword) {
           const list = Array.isArray(result.blockedPosts)
             ? result.blockedPosts
             : [];
-          if (storeInList) {
-            list.unshift({ snippet, keyword, at: Date.now() });
-          }
+          list.unshift({
+            snippet: storeInList ? snippet : "",
+            keyword,
+            at: Date.now(),
+          });
           const prev = result.statsByKeyword ?? null;
           const stats =
             prev && typeof prev === "object" && !Array.isArray(prev)
@@ -290,9 +292,7 @@ function appendBlockedPost(snippet, keyword) {
             [countKey]: (countPrev[countKey] ?? 0) + 1,
           };
           chrome.storage.local.set({
-            blockedPosts: storeInList
-              ? list.slice(0, BLOCKED_LIST_MAX)
-              : result.blockedPosts ?? [],
+            blockedPosts: list.slice(0, BLOCKED_LIST_MAX),
             statsByKeyword: stats,
             countByKeywordDay: countNext,
           });
