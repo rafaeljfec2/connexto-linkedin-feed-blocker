@@ -5,7 +5,9 @@ customElements.define(
   class ExtensionFooter extends HTMLElement {
     connectedCallback() {
       if (this.hasChildNodes()) return;
-      this.innerHTML = `
+      const version =
+      chrome.runtime?.getManifest?.()?.version ?? "";
+    this.innerHTML = `
     <footer class="footer">
       ${t("extDevBy")}
       <a
@@ -13,7 +15,7 @@ customElements.define(
         target="_blank"
         rel="noopener noreferrer"
         >rafaeljfec2</a
-      >
+      >${version ? ` · v${version}` : ""}
     </footer>`;
     }
   }
